@@ -11,8 +11,13 @@ export const template = () => `
 `;
 
 //! Define una función asíncrona llamada `getBooks` para obtener y mostrar libros desde una API:
-export const getAsistentesByEvento = async (eventoId) => {
+export const showAsistentesByEvento = async (eventoId) => {
   try {
+     // Verifica si el ID del evento está definido
+     if (!eventoId) {
+      console.error('ID del evento no proporcionado');
+      return;
+    }
     // Realiza una solicitud a la API para obtener datos de asistentes
     const response = await fetch(
       `http://localhost:3000/api/v1/eventos/${eventoId}/asistentes`
@@ -25,6 +30,7 @@ export const getAsistentesByEvento = async (eventoId) => {
 
     const asistentes = await response.json(); // Convierte los datos a formato JSON
     console.log(asistentes);
+
     const asistentesContainer = document.querySelector('#asistentes-container');
     asistentesContainer.innerHTML = '';
 
@@ -76,11 +82,6 @@ export const getAllAsistentes = async () => {
     console.error('Error al obtener los asistentes:', error);
   }
 };
-//! Define una función para manejar la visualización del botón "Ver Asistentes"
-export const toggleVerAsistentes = () => {
-  const verAsistentesBtn = document.getElementById('ver-asistentes');
-  verAsistentesBtn.style.display = 'none'; // Oculta el botón "Ver Asistentes"
-};
 
 //! Define una función llamada `Asistentes` que actualiza el contenido de la sección de libros en el DOM:
 export const Asistentes = (eventoId) => {
@@ -88,5 +89,5 @@ export const Asistentes = (eventoId) => {
   document.querySelector('main').innerHTML = template();
 
   // Llama a la función `getBooks` para cargar dinámicamente los libros en la página
-  getAsistentesByEvento(eventoId);
+  showAsistentesByEvento(eventoId);
 };

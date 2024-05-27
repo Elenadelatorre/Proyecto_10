@@ -1,5 +1,5 @@
 import { template, getEventos, handleCrearEvento } from './eventosModule.js';
-import { getAllAsistentes, toggleVerAsistentes } from './asistentesModule.js';
+
 
 //! Define una función que actualiza el contenido de la sección de libros en el DOM:
 const Eventos = () => {

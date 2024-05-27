@@ -1,4 +1,7 @@
-import { getAsistentesByEvento } from './asistentesModule.js';
+import {
+  showAsistentesByEvento,
+  getAllAsistentes
+} from './asistentesModule.js';
 
 //! Define una arrow function llamada `template` que devuelve un template string:
 export const template = () => `
@@ -90,29 +93,10 @@ export const getEventos = async () => {
       li.querySelector('.ver-asistentes-btn').addEventListener(
         'click',
         async () => {
-          await getAsistentesByEvento(evento._id);
+          await showAsistentesByEvento(evento._id);
         }
       );
     });
-
-    // Agrega el evento clic al botón de ver asistentes para mostrar la sección de asistentes:
-    document.querySelectorAll('.ver-asistentes-btn').forEach((btn) => {
-      btn.addEventListener('click', async (e) => {
-        e.preventDefault();
-        toggleVerAsistentes();
-        document.querySelector('.eventos').style.display = 'none';
-        const eventoId = btn.getAttribute('data-evento-id');
-        await getAllAsistentes(eventoId);
-      });
-    });
-    // Agrega el evento clic al botón de crear evento para mostrar el formulario:
-    // document
-    //   .getElementById('crear-evento-btn')
-    //   console.log("Botón clicado");
-    //   .addEventListener('click', (event) => {
-    //     event.preventDefault();
-    //     handleCrearEvento();
-    //   });
   } catch (error) {
     console.error('Error al obtener los eventos:', error);
   }
@@ -122,7 +106,7 @@ const verAsistentesBtns = document.querySelectorAll('.ver-asistentes-btn');
 verAsistentesBtns.forEach((btn) => {
   btn.addEventListener('click', async () => {
     const eventoId = btn.getAttribute('data-evento-id');
-    await getAsistentesByEvento(eventoId);
+    await showAsistentesByEvento(eventoId);
   });
 });
 
@@ -145,21 +129,22 @@ export const handleAddToAsistencias = async (eventoId) => {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          eventoConfirmado: eventoId,
+          //eventoConfirmado: eventoId,
           nombre: user.nombre,
           email: user.email
         })
       }
     );
     if (!postResponse.ok) {
-      const errorData = await response.json();
+      const errorData = await postResponse.json();
+      console.error('Error en la respuesta de la API:', errorData);
       throw new Error(errorData.message || 'Error al marcar asistencia');
     }
 
-    const responseData = await response.json();
+    const responseData = await postResponse.json();
     alert(responseData.message || 'Asistencia confirmada');
   } catch (error) {
-    console.log(error);
+    console.error('Error en la llamada fetch:', error);
     alert('Hubo un error al marcar la asistencia');
   }
 };

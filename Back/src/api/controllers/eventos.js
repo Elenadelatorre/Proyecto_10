@@ -79,11 +79,12 @@ const getAsistentesByEvento = async (req, res, next) => {
   try {
     const { eventoId } = req.params;
     console.log(eventoId);
+
     const asistentes = await Asistente.find({ eventoConfirmado: eventoId });
     return res.status(200).json(asistentes);
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: 'Error al obtener los asistentes', error });
+    console.error('Error al obtener los asistentes:', error);
+    res.status(404).json({ message: 'Error al obtener los asistentes', error });
   }
 };
 
@@ -92,30 +93,55 @@ const postAsistente = async (req, res, next) => {
   try {
     // Verifica si el usuario ya está inscrito en este evento
     const { eventoId } = req.params;
-    const { nombre, email, userId } = req.body;
+    const { nombre, email } = req.body;
 
+    console.log(`Buscando evento con ID: ${eventoId}`);
+    // Verifica si el evento existe:
     const evento = await Evento.findById(eventoId);
     if (!evento) {
       return res.status(404).json({ message: 'Evento no encontrado' });
     }
-    // Actualiza el campo eventoConfirmado del usuario
-    const user = await User.findById(userId);
+
+    // Verifica si el usuario existe
+    console.log(`Buscando usuario con nombre: ${nombre} y email: ${email}`);
+    let user = await User.findOne({ nombre, email });
     if (!user) {
-      return res.status(404).json({ message: 'Usuario no encontrado' });
+      // Si el usuario no existe, crea uno nuevo (opcional, dependiendo de tu lógica)
+      user = new User({ nombre, email });
+      await user.save();
     }
 
+    console.log('Verificando si el usuario ya está registrado en este evento');
     // Verifica si el usuario ya está registrado para este evento
-    if (user.eventoConfirmado.includes(eventoId)) {
+    if (user.eventoConfirmado === eventoId) {
+      console.log('El usuario ya está registrado para este evento');
       return res
         .status(400)
         .json({ message: 'Ya estás registrado como asistente' });
     }
 
-    // Agrega el ID del evento confirmado al array del usuario
-    user.eventoConfirmado.push(eventoId);
+    console.log('Actualizando evento confirmado del usuario');
+    // Actualiza el campo eventoConfirmado del usuario:
+    user.eventoConfirmado = eventoId;
     await user.save();
 
+    console.log(
+      'Verificando si el asistente ya está registrado para este evento'
+    );
     // Verifica si el asistente ya está registrado para este evento
+    const asistenteExistente = await Asistente.findOne({
+      nombre,
+      email,
+      eventoConfirmado: eventoId
+    });
+    if (asistenteExistente) {
+      return res
+        .status(404)
+        .json({ message: 'Asistente ya registrado para este evento' });
+    }
+
+    console.log('Creando nuevo asistente y asociándolo al evento');
+    // Crea un nuevo asistente y lo asocia al evento
     const nuevoAsistente = new Asistente({
       nombre,
       email,
@@ -126,9 +152,10 @@ const postAsistente = async (req, res, next) => {
     evento.asistentes.push(nuevoAsistente._id);
     await evento.save();
 
+    console.log('Asistencia confirmada con éxito');
     return res.status(200).json({ message: 'Asistencia confirmada' });
   } catch (error) {
-    res.status(500).json({ message: 'Error al agregar asistencia', error });
+    res.status(404).json({ message: 'Error al agregar asistencia', error });
   }
 };
 module.exports = {
