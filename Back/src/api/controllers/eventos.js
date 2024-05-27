@@ -1,6 +1,7 @@
 const Evento = require('../models/eventos');
 const Asistente = require('../models/asistentes');
 const User = require('../models/users');
+const multer = require('multer');
 
 //GET eventos disponibles:
 const getEventos = async (req, res, next) => {
@@ -28,15 +29,13 @@ const getEventoById = async (req, res, next) => {
 //POST evento
 const postNuevoEvento = async (req, res, next) => {
   try {
-    const { titulo, fecha, ubicacion, descripcion } = req.body;
-    let img = {};
-
+    const { titulo, fecha, ubicacion, descripcion} = req.body;
+ 
+    let img= '';
     if (req.file) {
-      img = {
-        data: req.file.buffer,
-        contentType: req.file.mimetype
-      };
+      img = req.file.path;
     }
+
     const nuevoEvento = new Evento({
       titulo,
       fecha,
@@ -158,11 +157,34 @@ const postAsistente = async (req, res, next) => {
     res.status(404).json({ message: 'Error al agregar asistencia', error });
   }
 };
+const putEvento = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const newEvento = new Evento(req.body);
+    newEvento._id = id;
+
+    if (neq.file) {
+      newEvento.img = req.file.path;
+
+      const oldEvento = await Evento.findById(id);
+      deleteFile(oldEvento.img);
+    }
+
+    const eventoUpdated = await Juego.findByIdandUpdate(id, newEvento, {
+      new: true
+    });
+    return res.status(200).json(eventoUpdated);
+  } catch (error) {
+    return res.status(400).json('Error en la solicitud');
+  }
+};
+
 module.exports = {
   getEventos,
   getEventoById,
   postNuevoEvento,
   getAsistentesByEvento,
   postAsistente,
-  getEventosConfirmadosByUser
+  getEventosConfirmadosByUser,
+  putEvento
 };

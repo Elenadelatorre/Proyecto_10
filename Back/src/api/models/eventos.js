@@ -22,7 +22,7 @@ const eventoSchema = new mongoose.Schema(
       trim: true,
       maxlength: [500, 'La descripción no puede tener más de 500 caracteres']
     },
-    img: { data: Buffer, contentType: String },
+    img: { type: String, required: false },
     asistentes: [
       { type: mongoose.Types.ObjectId, ref: 'asistentes', required: false }
     ]
