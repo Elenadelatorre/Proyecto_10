@@ -1,3 +1,11 @@
+* {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  text-decoration: none;
+  box-sizing: border-box;
+}
+
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -12,63 +20,71 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
 body {
   font-family: Arial, sans-serif;
   background-color: #f0f0f0;
-  display: flex;
   justify-content: center;
-  align-items: center;
-  height: 100vh;
-  margin: 0;
+  height: 100svh;
+  overflow: hidden;
 }
 
-/* Estilos generales */
-#app {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
 header {
+  position: sticky;
+  top: 0;
   background-color: #4caf50;
   color: white;
-  padding: 1rem;
+  padding: 10px;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: center;
+
+  height: 10svh;
+  z-index: 999999999999999999999;
 }
 header h1 {
   margin: 0;
+  font-size: 1.8rem;
 }
+
 header nav {
   display: flex;
   gap: 1rem;
 }
+
 header a {
   color: white;
+  font-weight: bold;
   text-decoration: none;
   padding: 0.5rem 1rem;
+  border: 1px solid white;
   border-radius: 5px;
+  cursor: pointer;
   transition: background-color 0.3s;
 }
 header a:hover {
-  background-color: #45a049;
+  background-color: white;
+  color: #4caf50;
 }
 main {
   flex: 1;
   padding: 2rem;
   background-color: white;
+  width: 100%;
 }
+
 footer {
   background-color: #333;
   color: white;
+  padding: 20px;
   text-align: center;
-  padding: 1rem;
 }
 
 /* Estilos para la sección de register y login */
 
 #register,
-#login {
+#login,
+#crear-evento-modal {
   max-width: 500px;
   margin: 2rem auto;
   padding: 2rem;
@@ -85,24 +101,28 @@ footer {
   margin-top: 0;
   text-align: center;
   color: #4caf50;
+  font-size: 2rem;
 }
 
 #register-form,
-#login-form {
+#login-form,
+#crear-evento-modal {
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
 
 #register-form label,
-#login-form label {
+#login-form label,
+#crear-evento-modal label {
   font-weight: bold;
   color: #333; /* Color de texto oscuro */
   cursor: default;
 }
 
 #register-form input,
-#login-form input {
+#login-form input,
+#crear-evento-modal input {
   width: 100%;
   padding: 10px;
   border: 1px solid #ccc;
@@ -113,13 +133,15 @@ footer {
 }
 
 #register-form input:focus,
-#login-form input:focus {
+#login-form input:focus,
+#crear-evento-modal input:focus {
   border-color: #4caf50;
   outline: none;
 }
 
 #registerbtn,
-#loginbtn {
+#loginbtn,
+#crear-evento {
   background-color: #4caf50;
   color: white;
   padding: 0.75rem;
@@ -131,7 +153,8 @@ footer {
 }
 
 #registerbtn:hover,
-#loginbtn:hover {
+#loginbtn:hover,
+#crear-evento:hover {
   background-color: #45a049;
 }
 
@@ -142,13 +165,33 @@ footer {
   padding: 0;
 }
 
+#eventos-container {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 50px;
+}
+
+#crear-evento-btn {
+  background-color: #4caf50;
+  color: white;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 5px;
+  margin-left: 50px;
+  margin-top: 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
 .evento-item {
   display: flex;
   align-items: center;
   margin-bottom: 20px;
   border: 1px solid #ccc;
   border-radius: 5px;
-  margin-bottom: 20px;
   padding: 20px;
   background-color: #eaf7ea; /* Fondo verde claro */
   color: #2c682d;
@@ -163,7 +206,15 @@ footer {
 
 .evento-info {
   flex: 1;
-  margin-left: 60px;
+  margin-left: 80px;
+}
+
+.evento-info h2 {
+  font-size: 26px;
+  font-weight: bold;
+  color: #2dbb34;
+  margin-bottom: 5px;
+  text-transform: uppercase;
 }
 
 .evento-info h3,
@@ -171,10 +222,12 @@ footer {
 .evento-info h5,
 .evento-info p {
   margin: 5px 0;
+  font-size: large;
 }
 
 .asistencia-btn {
   padding: 10px;
+  font-size: 16px;
   background-color: #28a745;
   color: white;
   border: none;
@@ -185,22 +238,16 @@ footer {
 }
 
 .asistencia-btn:hover {
-  background-color: #218838;
+  background-color: #1b752f;
 }
 
-#ver-asistentes {
-  display: block;
-  text-align: center;
-  text-decoration: dashed;
-}
-
-#ver-asistentes:hover {
+.ver-asistentes-btn:hover {
   text-decoration: underline;
 }
 
 #asistentes-section {
   margin-top: 20px;
-  text: black;
+  color: black;
 }
 #asistentes-container li {
   color: #333;
@@ -216,21 +263,24 @@ footer {
 }
 
 #asistentes-container li::before {
-  content: '👤'; /* Icono de usuario antes de cada elemento */
+  content: '👤';
   margin-right: 5px; /* Espacio entre el icono y el texto */
 }
 
 #volver {
   padding: 10px;
-  background-color: #007bff;
+  font-size: 16px;
+  background-color: #457f4d;
   color: white;
-  border: none;
+  border-radius: 5px;
   cursor: pointer;
+  border: none;
   margin-top: 10px;
 }
 
 #volver:hover {
-  background-color: #0056b3;
+  background-color: white;
+  color: #457f4d;
 }
 
 /* Estilos para la ventana modal */
@@ -301,9 +351,10 @@ footer {
   background-color: #45a049; /* Cambio de color al pasar el ratón */
 }
 
-.ver-asistentes-btn{
+.ver-asistentes-btn,
+#cancelar-crear-evento {
   padding: 10px;
-  background-color: white ;
+  background-color: white;
   color: #28a745;
   border: none;
   border-radius: 5px;

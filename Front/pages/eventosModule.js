@@ -19,7 +19,7 @@ export const template = () => `
     </div>
     <div id="crear-evento-modal" class="modal" style="display: none">
       <h2 class="eventos">Crear Nuevo Evento</h2
-      <form id="nuevo-evento-form" class ="modal-content">
+      <form id="nuevo-evento-form" >
         <label for="titulo">Título:</label>
         <input type="text" id="titulo" name="titulo" ><br>
         <label for="fecha">Fecha:</label>

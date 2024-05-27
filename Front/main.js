@@ -15,6 +15,8 @@ import Eventos from './pages/Eventos';
 import EventosConfirmados from './pages/EventosConfirmados';
 
 document.addEventListener('DOMContentLoaded', function () {
+  Eventos();
+
   // Añade un controlador de eventos para el clic en el elemento con id "loginlink", que llama a la función Login().
   document.querySelector('#loginlink').addEventListener('click', (event) => {
     event.preventDefault();
