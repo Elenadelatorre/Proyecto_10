@@ -1,7 +1,4 @@
-import {
-  showAsistentesByEvento,
-  getAllAsistentes
-} from './asistentesModule.js';
+import { showAsistentesByEvento } from './asistentesModule.js';
 
 //! Define una arrow function llamada `template` que devuelve un template string:
 export const template = () => `
@@ -19,7 +16,7 @@ export const template = () => `
     </div>
     <div id="crear-evento-modal" class="modal" style="display: none">
       <h2 class="eventos">Crear Nuevo Evento</h2
-      <form id="nuevo-evento-form" >
+      <form id="nuevo-evento-form" enctype="multipart/form-data" >
         <label for="titulo">Título:</label>
         <input type="text" id="titulo" name="titulo" ><br>
         <label for="fecha">Fecha:</label>
@@ -57,12 +54,8 @@ export const getEventos = async () => {
       const li = document.createElement('li');
       li.className = 'evento-item';
 
-      let imgSrc = '';
-      if (evento.img && evento.img.contentType) {
-        imgSrc = `data:${evento.img.contentType};base64,${btoa(
-          String.fromCharCode(...new Uint8Array(evento.img.data))
-        )}`;
-      }
+      // Utiliza la URL de la imagen almacenada en Cloudinary
+      const imgSrc = evento.img || '';
 
       li.innerHTML = `
       <img src="${imgSrc}" alt="${evento.titulo}" class="evento-img" />
@@ -157,14 +150,7 @@ export const handleCrearEvento = async () => {
     const fecha = document.getElementById('fecha').value;
     const ubicacion = document.getElementById('ubicacion').value;
     const descripcion = document.getElementById('descripcion').value;
-    const imgInput = document.getElementById('img');
-
-    let img = null;
-    if (imgInput.files.length > 0) {
-      // Obtener el primer archivo seleccionado
-      const file = imgInput.files[0];
-      img = file;
-    }
+    const img = document.getElementById('img');
 
     console.log(titulo, fecha, ubicacion, descripcion, img);
 

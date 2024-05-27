@@ -26,7 +26,7 @@ body {
   background-color: #f0f0f0;
   justify-content: center;
   height: 100svh;
-  overflow: hidden;
+  overflow: auto;
 }
 
 header {
@@ -167,10 +167,11 @@ footer {
 
 #eventos-container {
   display: flex;
-  flex-direction: column;
   flex-wrap: wrap;
   justify-content: center;
   margin-top: 50px;
+  /* Agrega desplazamiento vertical cuando sea necesario */
+  max-height: 90vh;
 }
 
 #crear-evento-btn {
@@ -195,6 +196,7 @@ footer {
   padding: 20px;
   background-color: #eaf7ea; /* Fondo verde claro */
   color: #2c682d;
+  width: 100%;
 }
 
 .evento-img {
