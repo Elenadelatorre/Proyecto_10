@@ -29,12 +29,12 @@ const getEventoById = async (req, res, next) => {
 //POST evento
 const postNuevoEvento = async (req, res, next) => {
   try {
-    const { titulo, fecha, ubicacion, descripcion} = req.body;
- 
-    let img= '';
-    if (req.file) {
-      img = req.file.path;
-    }
+    const { titulo, fecha, ubicacion, descripcion, img } = req.body;
+
+    // let img = '';
+    // if (req.file) {
+    //   img = req.file.path;
+    // }
 
     const nuevoEvento = new Evento({
       titulo,

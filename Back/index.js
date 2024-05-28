@@ -13,14 +13,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use(bodyParser.json({ limit: '50mb' }));
-app.use(bodyParser.urlencoded({limit: '50mb',extended: true }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
 connectDB();
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET
-})
+});
 
 app.use('/api/v1/eventos', eventosRouter);
 app.use('/api/v1/asistentes', asistentesRouter);
