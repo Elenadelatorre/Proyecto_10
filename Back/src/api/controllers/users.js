@@ -48,7 +48,7 @@ const login = async (req, res, next) => {
   }
 };
 
-//isAuth:
+//isUser:
 const isAuth = async (req, res, next) => {
   try {
     const token = req.headers.authorization;
