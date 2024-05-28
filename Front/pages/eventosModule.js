@@ -53,9 +53,7 @@ export const getEventos = async () => {
     eventos.forEach((evento) => {
       const li = document.createElement('li');
       li.className = 'evento-item';
-
-      // Utiliza la URL de la imagen almacenada en Cloudinary
-      //const imgSrc = evento.img || '';
+      li.dataset.eventoId = evento._id;
 
       li.innerHTML = `
       <img src="${evento.img}" alt="${evento.titulo}" class="evento-img" />
@@ -77,7 +75,8 @@ export const getEventos = async () => {
       // Agrega un evento clic al botón de asistencia:
       li.querySelector('.asistencia-btn').addEventListener(
         'click',
-        async () => {
+        async (e) => {
+          e.stopPropagation();
           await handleAddToAsistencias(evento._id);
         }
       );
@@ -85,10 +84,15 @@ export const getEventos = async () => {
       // Agrega un evento clic al botón de ver asistentes:
       li.querySelector('.ver-asistentes-btn').addEventListener(
         'click',
-        async () => {
+        async (e) => {
+          e.stopPropagation();
           await showAsistentesByEvento(evento._id);
         }
       );
+      // Agrega un evento clic al elemento `evento-item`
+      li.addEventListener('click', async () => {
+        await getEventoEspecifico(evento._id);
+      });
     });
   } catch (error) {
     console.error('Error al obtener los eventos:', error);
@@ -142,6 +146,43 @@ export const handleAddToAsistencias = async (eventoId) => {
   }
 };
 
+//! Define una función para mostrar los detalles de un evento específico:
+export const getEventoEspecifico = async (eventoId) => {
+  try {
+    // Realiza una solicitud a la API para obtener los detalles del evento
+    const response = await fetch(
+      `http://localhost:3000/api/v1/eventos/${eventoId}`
+    );
+    if (!response.ok) {
+      throw new Error('Error al obtener los detalles del evento');
+    }
+
+    const evento = await response.json();
+
+    // Muestra los detalles del evento en el DOM
+    const eventosContainer = document.querySelector('#eventos-container');
+    eventosContainer.innerHTML = `
+      <div id="evento-detalles">
+        <img src="${evento.img}" alt="${evento.titulo}" class="evento-img" />
+        <div class="evento-info">
+          <h2>${evento.titulo}</h2>
+          <h3>${new Date(evento.fecha).toLocaleDateString()}</h3>
+          <h4>${evento.ubicacion}</h4>
+          <h5>${evento.descripcion}</h5>
+        </div>
+        <button id="volver">Volver a eventos</button>
+      </div>
+    `;
+
+    // Agrega un evento clic al botón de volver
+    document.getElementById('volver').addEventListener('click', async () => {
+      await getEventos();
+    });
+  } catch (error) {
+    console.error('Error al obtener los detalles del evento:', error);
+  }
+};
+
 //! Crear una función para manejar la creación de eventos:
 export const handleCrearEvento = async () => {
   try {
@@ -156,6 +197,7 @@ export const handleCrearEvento = async () => {
 
     // Llamar a la función para crear el evento
     console.log('Enviando solicitud fetch...');
+
     // Crear FormData para subir la imagen
     const formData = new FormData();
     formData.append('file', imgInput);

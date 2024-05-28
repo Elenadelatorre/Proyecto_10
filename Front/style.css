@@ -129,7 +129,7 @@ footer {
   transition: background-color 0.3s;
 }
 
-.link a{
+.link a {
   color: blue;
 }
 
@@ -266,7 +266,7 @@ footer {
 }
 
 .evento-info h2 {
-  font-size: 1.6em;
+  font-size: 2em;
   font-weight: bold;
   color: #2dbb34;
   margin-bottom: 15px;
@@ -275,12 +275,33 @@ footer {
 
 .evento-info h3 {
   font-size: 1.2em;
+  font-weight: 500;
+  color: #666;
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
 }
-.evento-info h3,
-.evento-info h4,
-.evento-info h5,
-.evento-info p {
-  margin: 10px 0;
+.evento-info h3::before {
+  content: '📅';
+  margin-right: 8px;
+}
+
+.evento-info h4 {
+  font-size: 1.2em;
+  font-weight: 500;
+  color: #666;
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.evento-info h4::before {
+  content: '📍';
+  margin-right: 8px;
+}
+.evento-info h5 {
+  font-size: 0.8em;
+  color: #555;
+  line-height: 1.6;
 }
 
 .asistencia-btn {
@@ -339,6 +360,35 @@ footer {
 #volver:hover {
   background-color: white;
   color: #457f4d;
+}
+
+#evento-detalles {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
+#evento-detalles img {
+  width: 100%;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  margin-right: 0;
+}
+#evento-detalles .evento-info {
+  display: flex;
+  text-align: center;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin:0;
+}
+
+#evento-detalles .evento-info h2,
+#evento-detalles .evento-info h3,
+#evento-detalles .evento-info h4,
+#evento-detalles .evento-info h5 {
+  margin: 0.5rem 0;
 }
 
 /* Estilos para la ventana modal */

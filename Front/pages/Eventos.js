@@ -1,8 +1,9 @@
 import { template, getEventos, handleCrearEvento } from './eventosModule.js';
-
+import { updateLogoutLinkVisibility } from './Register';
 
 //! Define una función que actualiza el contenido de la sección de libros en el DOM:
 const Eventos = () => {
+  updateLogoutLinkVisibility(true);
   // Selecciona el elemento 'main' en el DOM y asigna el HTML generado por la función `template`
   document.querySelector('main').innerHTML = template();
   // Llama a la función `getBooks` para cargar dinámicamente los libros en la página

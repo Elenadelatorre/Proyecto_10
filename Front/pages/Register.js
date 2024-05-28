@@ -23,6 +23,14 @@ const template = () => `
   </section>
 `;
 
+// Función para actualizar la visibilidad del enlace de cerrar sesión
+export const updateLogoutLinkVisibility = (isVisible) => {
+  const logoutLink = document.querySelector('#logoutlink');
+  if (logoutLink) {
+    logoutLink.style.display = isVisible ? 'block' : 'none';
+  }
+};
+
 //! Define una función asíncrona llamada `registerSubmit` para procesar el envío del formulario de registro
 const registerSubmit = async (event) => {
   event.preventDefault(); // Evita la recarga de la página por defecto
@@ -73,19 +81,19 @@ const registerSubmit = async (event) => {
 
 //! Define una función llamada `Register` que actualiza el contenido de la sección de registro en el DOM:
 const Register = () => {
+  updateLogoutLinkVisibility(false);
   // Selecciona el elemento 'main' en el DOM y asigna el HTML generado por la función `template`
   document.querySelector('main').innerHTML = template();
 
-  // Agrega un event listener al botón de registro para procesar el evento de clic
   // Agrega un event listener al formulario para procesar el evento de envío
   document
     .querySelector('#register-form')
     .addEventListener('submit', registerSubmit); // Llama a la función `registerSubmit` para procesar el envío del formulario
 
-    document.querySelector('#login-link').addEventListener('click', () => {
-      // Llama a la función `Login` para redirigir al usuario a la sección de inicio de sesión
-      Login();
-    });
+  document.querySelector('#login-link').addEventListener('click', () => {
+    // Llama a la función `Login` para redirigir al usuario a la sección de inicio de sesión
+    Login();
+  });
 };
 
 //! Exporta la función `Register` como el valor predeterminado del módulo

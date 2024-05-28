@@ -1,7 +1,7 @@
 //! Importa la función `Books` desde el módulo "./Books" para poder mostrarla:
 // una vez hayamos iniciado sesión
 import Eventos from './Eventos';
-import  Register  from './Register';
+import Register, { updateLogoutLinkVisibility } from './Register';
 
 //! Define una función arrow llamada `template` que devuelve un template string:
 const template = () => {
@@ -14,7 +14,7 @@ const template = () => {
       <h2>¡Bienvenido de nuevo, ${user.nombre}!</h2>
     </section>`;
   } else {
-    return  `<section id="login" class="login"> <h2>Inicio de sesión</h2>
+    return `<section id="login" class="login"> <h2>Inicio de sesión</h2>
         <form id="login-form">
           <label for="email">Correo electrónico</label>
           <input type="email" placeholder="Correo electrónico" id="email" required/>
@@ -76,6 +76,7 @@ const loginSubmit = async (event) => {
 
 //! Define una función llamada `Login` que actualiza el contenido de la sección de inicio de sesión en el DOM
 const Login = () => {
+  updateLogoutLinkVisibility(false);
   // Selecciona el elemento 'main' en el DOM y asigna el HTML generado por la función `template`
   document.querySelector('main').innerHTML = template();
 

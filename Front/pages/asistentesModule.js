@@ -1,3 +1,4 @@
+import { getEventos } from "./eventosModule";
 //! Define una arrow function llamada `template` que devuelve un template string:
 export const template = () => `
 <section id="asistentes">
@@ -13,8 +14,8 @@ export const template = () => `
 //! Define una función asíncrona llamada `getBooks` para obtener y mostrar libros desde una API:
 export const showAsistentesByEvento = async (eventoId) => {
   try {
-     // Verifica si el ID del evento está definido
-     if (!eventoId) {
+    // Verifica si el ID del evento está definido
+    if (!eventoId) {
       console.error('ID del evento no proporcionado');
       return;
     }
@@ -47,6 +48,11 @@ export const showAsistentesByEvento = async (eventoId) => {
     document.getElementById('eventos-container').style.display = 'none';
     document.getElementById('asistentes-section').style.display = 'block';
     document.getElementById('welcome-message').style.display = 'none';
+    // Actualizar el botón de "Volver"
+    document.getElementById('volver').addEventListener('click', async () => {
+      // Redirigir al usuario a la lista de eventos
+      await getEventos();
+    });
   } catch (error) {
     console.log('Error en obtener los asistentes:', error);
   }
