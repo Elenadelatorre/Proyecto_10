@@ -7,7 +7,7 @@ const Logout = () => {
   localStorage.removeItem('user');
 
   // Muestra una alerta indicando que el usuario ha cerrado sesión
-  alert('Has cerrado sesión exitosamente.');
+  alert('Has cerrado sesión exitosamente. ¡Nos vemos pronto!');
 
   // Llama a la función Login para redirigir al usuario a la página de inicio de sesión
   Login();

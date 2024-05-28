@@ -5,9 +5,9 @@ export const template = () => `
   <section id="eventos">
   <h3 id="welcome-message">${
     localStorage.getItem('user') ? 'Bienvenido' : 'Por favor, inicie sesión'
-  }</h3>
+  }</h3>f
     <h2 class="eventos">Eventos</h2>
-    <button id="crear-evento-btn">Crear Evento ➕ </button>
+    <button id="crear-evento-btn">Crear nuevo evento ➕ </button>
     <ul id="eventos-container"></ul>
     <div id="asistentes-section" style="display: none;">
       <h2 class="asistentes">Asistentes</h2>
@@ -15,7 +15,7 @@ export const template = () => `
       <button id="volver">Volver a eventos</button>
     </div>
     <div id="crear-evento-modal" class="modal" style="display: none">
-      <h2 class="eventos">Crear Nuevo Evento</h2
+      <h2 class="eventos" class="modal-title">Crear Nuevo Evento</h2
       <form id="nuevo-evento-form" enctype="multipart/form-data" >
         <label for="titulo">Título:</label>
         <input type="text" id="titulo" name="titulo" ><br>
@@ -55,10 +55,10 @@ export const getEventos = async () => {
       li.className = 'evento-item';
 
       // Utiliza la URL de la imagen almacenada en Cloudinary
-      const imgSrc = evento.img || '';
+      //const imgSrc = evento.img || '';
 
       li.innerHTML = `
-      <img src="${imgSrc}" alt="${evento.titulo}" class="evento-img" />
+      <img src="${evento.img}" alt="${evento.titulo}" class="evento-img" />
       <div class="evento-info">
         <h2>${evento.titulo}</h2>
         <h3>${new Date(evento.fecha).toLocaleDateString()}</h3>
@@ -150,13 +150,28 @@ export const handleCrearEvento = async () => {
     const fecha = document.getElementById('fecha').value;
     const ubicacion = document.getElementById('ubicacion').value;
     const descripcion = document.getElementById('descripcion').value;
-    const img = document.getElementById('img');
+    const imgInput = document.getElementById('img').files[0];
 
     console.log(titulo, fecha, ubicacion, descripcion, img);
 
     // Llamar a la función para crear el evento
     console.log('Enviando solicitud fetch...');
+    // Crear FormData para subir la imagen
+    const formData = new FormData();
+    formData.append('file', imgInput);
+    formData.append('upload_preset', 'cloudinary_default'); // Reemplaza con tu upload preset de Cloudinary
 
+    // Subir imagen a Cloudinary
+    const cloudinaryResponse = await fetch(
+      'https://api.cloudinary.com/v1_1/dfqu7m4te/image/upload', // Reemplaza con tu URL de Cloudinary
+      {
+        method: 'POST',
+        body: formData
+      }
+    );
+
+    const cloudinaryData = await cloudinaryResponse.json();
+    const imgURL = cloudinaryData.secure_url; // Obtener URL de la imagen subida
     // Enviar los datos del evento al servidor
     const postResponse = await fetch(
       'http://localhost:3000/api/v1/eventos/nuevoEvento',
@@ -170,7 +185,7 @@ export const handleCrearEvento = async () => {
           fecha,
           ubicacion,
           descripcion,
-          img
+          img: imgURL
         })
       }
     );

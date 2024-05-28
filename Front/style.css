@@ -26,7 +26,8 @@ body {
   background-color: #f0f0f0;
   justify-content: center;
   height: 100svh;
-  overflow: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 header {
@@ -38,18 +39,22 @@ header {
   display: flex;
   justify-content: space-around;
   align-items: center;
-
-  height: 10svh;
-  z-index: 999999999999999999999;
+  height: 10vh;
+  z-index: 10;
 }
 header h1 {
   margin: 0;
-  font-size: 1.8rem;
+  font-size: 2rem;
 }
 
 header nav {
   display: flex;
   gap: 1rem;
+}
+
+header #logoutlink {
+  background-color: #070707;
+  border: none;
 }
 
 header a {
@@ -69,15 +74,18 @@ header a:hover {
 main {
   flex: 1;
   padding: 2rem;
-  background-color: white;
+  background-color: rgb(252, 246, 246);
   width: 100%;
+  height: 100%;
 }
 
 footer {
+  /* position: sticky; */
   background-color: #333;
   color: white;
   padding: 20px;
   text-align: center;
+  flex-shrink: 0;
 }
 
 /* Estilos para la sección de register y login */
@@ -94,14 +102,39 @@ footer {
 }
 
 #register h2,
-#login h2,
-.login h2,
+#login h2 {
+  color: #28a745;
+  margin-bottom: 30px;
+  text-align: center;
+  font-size: 2rem;
+}
+
 .eventos,
 .asistentes {
-  margin-top: 0;
+  margin-top: 25px;
+  margin-bottom: 20px;
   text-align: center;
-  color: #4caf50;
+  color: #132914;
   font-size: 2rem;
+}
+
+.link {
+  color: #070707;
+  font-weight: bold;
+  font-size: 0.8em;
+  padding: 0.5rem 1rem;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.link a{
+  color: blue;
+}
+
+.link a:hover {
+  text-decoration: underline;
 }
 
 #register-form,
@@ -127,7 +160,7 @@ footer {
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
-  font-size: 16px;
+  font-size: 14px;
   margin-top: 5px;
   margin-bottom: 15px;
 }
@@ -170,7 +203,6 @@ footer {
   flex-wrap: wrap;
   justify-content: center;
   margin-top: 50px;
-  /* Agrega desplazamiento vertical cuando sea necesario */
   max-height: 90vh;
 }
 
@@ -178,11 +210,11 @@ footer {
   background-color: #4caf50;
   color: white;
   padding: 0.75rem;
-  border: none;
+  border: 1px solid #070707;
   border-radius: 5px;
   margin-left: 50px;
   margin-top: 20px;
-  font-size: 1rem;
+  font-size: 1.2rem;
   cursor: pointer;
   transition: background-color 0.3s;
 }
@@ -192,18 +224,40 @@ footer {
   align-items: center;
   margin-bottom: 20px;
   border: 1px solid #ccc;
-  border-radius: 5px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin: 20px;
   padding: 20px;
-  background-color: #eaf7ea; /* Fondo verde claro */
+  background-color: #eaf7ea;
   color: #2c682d;
   width: 100%;
+  height: 250px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.evento-item:hover {
+  color: #2dbb34;
+  background-color: white;
+  transform: scale(1.03);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  -webkit-transform: scale(1.03);
+  -moz-transform: scale(1.03);
+  -ms-transform: scale(1.03);
+  -o-transform: scale(1.03);
 }
 
 .evento-img {
-  width: 100px;
-  height: 100px;
-  object-fit: cover;
-  margin-right: 20px;
+  width: 20%;
+  height: 230px;
+  object-fit: contain;
+  margin-right: 45px;
+  border-radius: 20px;
+  -webkit-border-radius: 20px;
+  -moz-border-radius: 20px;
+  -ms-border-radius: 20px;
+  -o-border-radius: 20px;
 }
 
 .evento-info {
@@ -212,19 +266,21 @@ footer {
 }
 
 .evento-info h2 {
-  font-size: 26px;
+  font-size: 1.6em;
   font-weight: bold;
   color: #2dbb34;
-  margin-bottom: 5px;
+  margin-bottom: 15px;
   text-transform: uppercase;
 }
 
+.evento-info h3 {
+  font-size: 1.2em;
+}
 .evento-info h3,
 .evento-info h4,
 .evento-info h5,
 .evento-info p {
-  margin: 5px 0;
-  font-size: large;
+  margin: 10px 0;
 }
 
 .asistencia-btn {
@@ -300,6 +356,12 @@ footer {
   padding: 20px;
   border-radius: 10px;
   z-index: 1000; /* Coloca la ventana modal encima de otros elementos */
+}
+
+.modal-title {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #2dbb34;
 }
 
 /* Estilos para el contenido dentro de la ventana modal */

@@ -16,8 +16,9 @@ const template = () => `
       <label for="password">Contraseña</label>
       <input type="password" id="password" placeholder="Contraseña" name="password" required/>
       <span id="password-help" style="color: #666; font-size: 0.8rem;">La contraseña debe tener al menos 8 caracteres.</span><br>
+      <p  class="link">¿Tienes una cuenta? <a id="login-link" href="#">Entrar</a></p>
 
-      <button type="submit" id="registerbtn">Registrar</button>
+      <button type="submit" id="registerbtn">Registrarse</button>
     </form>
   </section>
 `;
@@ -40,17 +41,20 @@ const registerSubmit = async (event) => {
 
   try {
     // Realiza una solicitud a la API para registrar un nuevo usuario
-    const response = await fetch('http://localhost:3000/api/v1/users/register', {
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      method: 'POST',
-      body: JSON.stringify({
-        nombre,
-        email,
-        contraseña: contraseña
-      })
-    });
+    const response = await fetch(
+      'http://localhost:3000/api/v1/users/register',
+      {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        method: 'POST',
+        body: JSON.stringify({
+          nombre,
+          email,
+          contraseña: contraseña
+        })
+      }
+    );
     if (!response.ok) {
       const errorData = await response.json();
       throw new Error(errorData.message || 'Error en el registro');
@@ -77,6 +81,11 @@ const Register = () => {
   document
     .querySelector('#register-form')
     .addEventListener('submit', registerSubmit); // Llama a la función `registerSubmit` para procesar el envío del formulario
+
+    document.querySelector('#login-link').addEventListener('click', () => {
+      // Llama a la función `Login` para redirigir al usuario a la sección de inicio de sesión
+      Login();
+    });
 };
 
 //! Exporta la función `Register` como el valor predeterminado del módulo

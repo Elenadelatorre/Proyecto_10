@@ -1,6 +1,7 @@
 //! Importa la función `Books` desde el módulo "./Books" para poder mostrarla:
 // una vez hayamos iniciado sesión
 import Eventos from './Eventos';
+import  Register  from './Register';
 
 //! Define una función arrow llamada `template` que devuelve un template string:
 const template = () => {
@@ -20,8 +21,9 @@ const template = () => {
 
           <label for="password">Contraseña</label>
           <input type="password" id="password" placeholder="Contraseña" required/>
+          <p class="link">¿No tienes cuenta? <a id="register-link" href="#">Regístrate</a></p>
 
-          <button type="submit" id="loginbtn">Login</button>
+          <button type="submit" id="loginbtn">Entrar</button>
         </form>
             </section>`;
   }
@@ -83,6 +85,10 @@ const Login = () => {
       .querySelector('#login-form')
       .addEventListener('submit', loginSubmit); // Llama a la función `loginSubmit` para procesar el envío del formulario
   }
+  document.querySelector('#register-link').addEventListener('click', () => {
+    // Llama a la función `Login` para redirigir al usuario a la sección de inicio de sesión
+    Register();
+  });
 };
 
 //! Exporta la función `Login` como el valor predeterminado del módulo
