@@ -14,7 +14,7 @@ const eventoSchema = new mongoose.Schema(
     },
     ubicacion: {
       type: String,
-      required: [true, 'La descripción es obligatoria']
+      required: [true, 'La ubicación es obligatoria']
     },
     descripcion: {
       type: String,
@@ -32,6 +32,8 @@ const eventoSchema = new mongoose.Schema(
     collection: 'eventos'
   }
 );
+// Creación del índice en el campo fecha
+eventoSchema.index({ fecha: 1 });
 const Evento = mongoose.model('eventos', eventoSchema, 'eventos');
 
 module.exports = Evento;

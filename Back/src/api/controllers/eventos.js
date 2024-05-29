@@ -164,7 +164,7 @@ const putEvento = async (req, res, next) => {
       deleteFile(oldEvento.img);
     }
 
-    const eventoUpdated = await Juego.findByIdandUpdate(id, newEvento, {
+    const eventoUpdated = await Juego.findByIdAndUpdate(id, newEvento, {
       new: true
     });
     return res.status(200).json(eventoUpdated);

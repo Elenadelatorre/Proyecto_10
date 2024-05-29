@@ -30,39 +30,25 @@ const register = async (req, res, next) => {
 const login = async (req, res, next) => {
   try {
     const { email, contraseña } = req.body;
+    const user = await User.findOne({ email }); //Comprobar si el usuario (email) existe en la BBDD.
 
-    const user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json('Usuario o contraseña incorrectos');
+      return res.status(400).json('Email o contraseña incorrectos');
     }
+    console.log(user);
 
     if (bcrypt.compareSync(contraseña, user.contraseña)) {
       const token = generarLlave(user._id);
       return res.status(200).json({ token, user });
+    } else {
+      return res.status(400).json('Email o contraseña incorrectos');
     }
-
-    return res.status(400).json('Usuario o contraseña incorrectos');
   } catch (error) {
     console.log(error);
     return res.status(400).json({ message: 'Error al iniciar sesión', error });
   }
 };
 
-//isUser:
-const isAuth = async (req, res, next) => {
-  try {
-    const token = req.headers.authorization;
 
-    const parsedToken = token.replace('Bearer ', '');
-    const { id } = verificarLlave(parsedToken);
-    const user = await User.findById(id);
 
-    user.password = null;
-    req.user = user;
-    next();
-  } catch (error) {
-    return res.status(400).json('No estás autorizado');
-  }
-};
-
-module.exports = { register, login, isAuth };
+module.exports = { register, login};
