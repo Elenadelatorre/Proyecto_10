@@ -1,4 +1,4 @@
-import { getEventos } from "./eventosModule";
+import { getEventos } from './eventosModule';
 //! Define una arrow function llamada `template` que devuelve un template string:
 export const template = () => `
 <section id="asistentes">
@@ -14,6 +14,11 @@ export const template = () => `
 //! Define una función asíncrona llamada `getBooks` para obtener y mostrar libros desde una API:
 export const showAsistentesByEvento = async (eventoId) => {
   try {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user) {
+      alert('Debe iniciar sesión para marcar asistencia a un evento.');
+      return;
+    }
     // Verifica si el ID del evento está definido
     if (!eventoId) {
       console.error('ID del evento no proporcionado');

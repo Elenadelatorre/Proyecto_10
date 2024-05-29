@@ -1,9 +1,18 @@
 import { template, getEventos, handleCrearEvento } from './eventosModule.js';
-import { updateLogoutLinkVisibility } from './Register';
+
 
 //! Define una función que actualiza el contenido de la sección de libros en el DOM:
 const Eventos = () => {
-  updateLogoutLinkVisibility(true);
+  const userLoggedIn = localStorage.getItem('user');
+  const logoutLink = document.getElementById('logoutlink');
+
+  if (!userLoggedIn && logoutLink) {
+    logoutLink.style.display = 'none';
+  } else {
+    logoutLink.style.display = 'block';
+  }
+
+  
   // Selecciona el elemento 'main' en el DOM y asigna el HTML generado por la función `template`
   document.querySelector('main').innerHTML = template();
   // Llama a la función `getBooks` para cargar dinámicamente los libros en la página
@@ -11,6 +20,10 @@ const Eventos = () => {
 
   // Agrega el evento clic al botón de crear evento para mostrar el formulario:
   document.getElementById('crear-evento-btn').addEventListener('click', () => {
+    if (!userLoggedIn) {
+      alert('Debe iniciar sesión para crear un evento.');
+      return;
+    }
     document.getElementById('crear-evento-modal').style.display = 'block';
     document.getElementById('asistentes-section').style.display = 'none';
   });

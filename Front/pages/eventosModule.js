@@ -3,9 +3,6 @@ import { showAsistentesByEvento } from './asistentesModule.js';
 //! Define una arrow function llamada `template` que devuelve un template string:
 export const template = () => `
   <section id="eventos">
-  <h3 id="welcome-message">${
-    localStorage.getItem('user') ? 'Bienvenido' : 'Por favor, inicie sesión'
-  }</h3>f
     <h2 class="eventos">Eventos</h2>
     <button id="crear-evento-btn">Crear nuevo evento ➕ </button>
     <ul id="eventos-container"></ul>
@@ -37,7 +34,7 @@ export const template = () => `
 //! Define una función asíncrona llamada 'getEventos' para obtener y mostrar eventos desde una API:
 export const getEventos = async () => {
   try {
-    // Realiza una solicitud a la API para obtener datos de libros
+    // Realiza una solicitud a la API para obtener datos de eventos:
     const response = await fetch('http://localhost:3000/api/v1/eventos');
 
     // Verifica si la solicitud fue exitosa
@@ -45,15 +42,19 @@ export const getEventos = async () => {
       throw new Error('Error al obtener los eventos');
     }
 
-    const eventos = await response.json(); // Convierte los datos a formato JSON
+    const eventos = await response.json();
     const eventosContainer = document.querySelector('#eventos-container');
     eventosContainer.innerHTML = '';
+
+    const asistencias = JSON.parse(localStorage.getItem('asistencias')) || {};
 
     // Itera sobre cada evento y crea elementos de lista para mostrar la información:
     eventos.forEach((evento) => {
       const li = document.createElement('li');
       li.className = 'evento-item';
       li.dataset.eventoId = evento._id;
+
+      const asistiendo = asistencias[evento._id] ? true : false;
 
       li.innerHTML = `
       <img src="${evento.img}" alt="${evento.titulo}" class="evento-img" />
@@ -63,9 +64,11 @@ export const getEventos = async () => {
         <h4>${evento.ubicacion}</h4>
         <h5>${evento.descripcion}</h5>
       </div>
-      <button class="asistencia-btn" data-evento-id="${
-        evento._id
-      }">Asisto 👍🏻</button>
+      <button class="asistencia-btn ${
+        asistiendo ? 'cancelar-asistencia' : ''
+      }" data-evento-id="${evento._id}">
+          ${asistiendo ? 'Cancelar asistencia 👎🏻' : 'Asistir 👍🏻'}
+        </button>
       <button class="ver-asistentes-btn" data-evento-id="${
         evento._id
       }">Ver Asistentes</button>
@@ -73,25 +76,26 @@ export const getEventos = async () => {
       eventosContainer.appendChild(li);
 
       // Agrega un evento clic al botón de asistencia:
-      li.querySelector('.asistencia-btn').addEventListener(
-        'click',
-        async (e) => {
-          e.stopPropagation();
-          await handleAddToAsistencias(evento._id);
+      const asistenciaBtn = li.querySelector('.asistencia-btn');
+      asistenciaBtn.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        if (asistiendo) {
+          await handleRemoveFromAsistencias(evento._id, asistenciaBtn);
+        } else {
+          await handleAddToAsistencias(evento._id, asistenciaBtn);
         }
-      );
+      });
 
       // Agrega un evento clic al botón de ver asistentes:
-      li.querySelector('.ver-asistentes-btn').addEventListener(
-        'click',
-        async (e) => {
-          e.stopPropagation();
-          await showAsistentesByEvento(evento._id);
-        }
-      );
+      const verAsistentesBtn = li.querySelector('.ver-asistentes-btn');
+      verAsistentesBtn.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        await showAsistentesByEvento(evento._id);
+      });
       // Agrega un evento clic al elemento `evento-item`
       li.addEventListener('click', async () => {
         await getEventoEspecifico(evento._id);
+        document.getElementById('crear-evento-btn').style.display = 'none';
       });
     });
   } catch (error) {
@@ -107,8 +111,9 @@ verAsistentesBtns.forEach((btn) => {
   });
 });
 
+//! ASISTENCIA:
 //! Define una función para manejar la asistencia a los eventos:
-export const handleAddToAsistencias = async (eventoId) => {
+export const handleAddToAsistencias = async (eventoId, button) => {
   try {
     const user = JSON.parse(localStorage.getItem('user'));
 
@@ -126,7 +131,6 @@ export const handleAddToAsistencias = async (eventoId) => {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          //eventoConfirmado: eventoId,
           nombre: user.nombre,
           email: user.email
         })
@@ -140,9 +144,91 @@ export const handleAddToAsistencias = async (eventoId) => {
 
     const responseData = await postResponse.json();
     alert(responseData.message || 'Asistencia confirmada');
+
+    // Actualizar el almacenamiento local
+    const asistencias = JSON.parse(localStorage.getItem('asistencias')) || {};
+    asistencias[eventoId] = true;
+    localStorage.setItem('asistencias', JSON.stringify(asistencias));
+
+    // Actualizar el botón
+    button.textContent = 'Cancelar asistencia 👎🏻';
+    button.classList.add('cancelar-asistencia');
+    button.removeEventListener('click', async (e) => {
+      e.stopPropagation();
+      await handleAddToAsistencias(eventoId, button);
+    });
+    button.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      await handleRemoveFromAsistencias(eventoId, button);
+    });
   } catch (error) {
     console.error('Error en la llamada fetch:', error);
     alert('Hubo un error al marcar la asistencia');
+  }
+};
+
+export const handleRemoveFromAsistencias = async (
+  eventoId,
+  button,
+  asistenteId
+) => {
+  try {
+    const user = JSON.parse(localStorage.getItem('user'));
+
+    if (!user) {
+      alert('Debe iniciar sesión para cancelar su asistencia a un evento.');
+      return;
+    }
+
+    const deleteResponse = await fetch(
+      `http://localhost:3000/api/v1/eventos/${eventoId}/asistencias`,
+      {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+
+    if (!deleteResponse.ok) {
+      const errorData = await deleteResponse.json();
+      console.error('Error en la respuesta de la API:', errorData);
+      throw new Error(errorData.message || 'Error al cancelar asistencia');
+    }
+
+    let responseData;
+    if (deleteResponse.status === 204) {
+      // No hay contenido en la respuesta (estatus 204 No Content)
+      responseData = { message: 'Asistencia cancelada correctamente' };
+    } else {
+      // La respuesta contiene datos, intenta analizarla como JSON
+      try {
+        responseData = await deleteResponse.json();
+      } catch (error) {
+        console.error('Error al parsear la respuesta JSON:', error);
+        responseData = { message: 'Error al parsear la respuesta JSON' };
+      }
+    }
+
+    // Actualizar el almacenamiento local
+    const asistencias = JSON.parse(localStorage.getItem('asistencias')) || {};
+    delete asistencias[eventoId];
+    localStorage.setItem('asistencias', JSON.stringify(asistencias));
+
+    // Actualizar el botón
+    button.textContent = 'Asistir 👍🏻';
+    button.classList.remove('cancelar-asistencia');
+    button.removeEventListener('click', async (e) => {
+      e.stopPropagation();
+      await handleRemoveFromAsistencias(eventoId, button);
+    });
+    button.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      await handleAddToAsistencias(eventoId, button);
+    });
+  } catch (error) {
+    console.error('Error al cancelar la asistencia:', error);
+    alert('Hubo un error al cancelar la asistencia');
   }
 };
 
@@ -177,6 +263,7 @@ export const getEventoEspecifico = async (eventoId) => {
     // Agrega un evento clic al botón de volver
     document.getElementById('volver').addEventListener('click', async () => {
       await getEventos();
+      document.getElementById('crear-evento-btn').style.display = 'block';
     });
   } catch (error) {
     console.error('Error al obtener los detalles del evento:', error);

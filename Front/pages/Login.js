@@ -1,4 +1,4 @@
-//! Importa la función `Books` desde el módulo "./Books" para poder mostrarla:
+//! Importa la función `Eventos` desde el módulo "./Eventos" para poder mostrarla:
 // una vez hayamos iniciado sesión
 import Eventos from './Eventos';
 import Register, { updateLogoutLinkVisibility } from './Register';
