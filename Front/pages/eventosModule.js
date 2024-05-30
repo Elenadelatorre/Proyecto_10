@@ -3,7 +3,7 @@ import { showAsistentesByEvento } from './asistentesModule.js';
 //! Define una arrow function llamada `template` que devuelve un template string:
 export const template = () => `
   <section id="eventos">
-    <h2 class="eventos">Eventos</h2>
+    <h2 class="eventos-title">Eventos</h2>
     <button id="crear-evento-btn">Crear nuevo evento ➕ </button>
     <ul id="eventos-container"></ul>
     <div id="asistentes-section" style="display: none;">
@@ -43,6 +43,9 @@ export const getEventos = async () => {
     }
 
     const eventos = await response.json();
+
+    // Ordena los eventos por fecha, de manera ascendente
+    eventos.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
     const eventosContainer = document.querySelector('#eventos-container');
     eventosContainer.innerHTML = '';
 
@@ -92,6 +95,7 @@ export const getEventos = async () => {
       const verAsistentesBtn = li.querySelector('.ver-asistentes-btn');
       verAsistentesBtn.addEventListener('click', async (e) => {
         e.stopPropagation();
+
         await showAsistentesByEvento(evento._id);
       });
 
@@ -105,15 +109,6 @@ export const getEventos = async () => {
     console.error('Error al obtener los eventos:', error);
   }
 };
-
-// Selecciona todos los botones "Ver Asistentes" y agrega el evento clic a cada uno
-const verAsistentesBtns = document.querySelectorAll('.ver-asistentes-btn');
-verAsistentesBtns.forEach((btn) => {
-  btn.addEventListener('click', async () => {
-    const eventoId = btn.getAttribute('data-evento-id');
-    await showAsistentesByEvento(eventoId);
-  });
-});
 
 //! ASISTENCIA:
 //! Define una función para manejar la asistencia a los eventos:

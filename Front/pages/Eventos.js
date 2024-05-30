@@ -1,21 +1,24 @@
 import { template, getEventos, handleCrearEvento } from './eventosModule.js';
 
-
 //! Define una función que actualiza el contenido de la sección de libros en el DOM:
 const Eventos = () => {
   const userLoggedIn = localStorage.getItem('user');
   const logoutLink = document.getElementById('logoutlink');
   const misEventos = document.getElementById('misEventoslink');
+  const loginlink = document.getElementById('loginlink');
+  const registerlink = document.getElementById('registerlink');
 
   if (!userLoggedIn && logoutLink) {
     logoutLink.style.display = 'none';
     misEventos.style.display = 'none';
+    loginlink.style.display = 'block';
   } else {
     logoutLink.style.display = 'block';
     misEventos.style.display = 'block';
+    loginlink.style.display = 'none';
+    registerlink.style.display = 'none';
   }
 
-  
   // Selecciona el elemento 'main' en el DOM y asigna el HTML generado por la función `template`
   document.querySelector('main').innerHTML = template();
   // Llama a la función `getBooks` para cargar dinámicamente los libros en la página

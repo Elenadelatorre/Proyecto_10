@@ -63,7 +63,7 @@ const loginSubmit = async (event) => {
     localStorage.setItem('user', JSON.stringify(user));
 
     // Muestra una alerta de bienvenida con el nombre de usuario
-    alert(`Bienvenido ${user.nombre}`);
+    alert(`¡Excelente! Has iniciado sesión con éxito ${user.nombre}.`);
 
     // Llama a la función `Books` para actualizar la sección de libros en la página
     Eventos();
@@ -76,10 +76,12 @@ const loginSubmit = async (event) => {
 //! Define una función llamada `Login` que actualiza el contenido de la sección de inicio de sesión en el DOM
 const Login = () => {
   updateLogoutLinkVisibility(false);
+  document.getElementById('loginlink').style.display = 'none';
   // Selecciona el elemento 'main' en el DOM y asigna el HTML generado por la función `template`
   document.querySelector('main').innerHTML = template();
 
   if (!localStorage.getItem('user')) {
+    document.getElementById('misEventoslink').style.display = 'none';
     // Agrega un event listener al botón de inicio de sesión para procesar el evento de clic
     document
       .querySelector('#login-form')

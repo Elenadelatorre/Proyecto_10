@@ -69,7 +69,7 @@ const registerSubmit = async (event) => {
     }
     // Muestra una alerta indicando que el registro fue exitoso y anima al usuario a iniciar sesión
     alert(
-      `Genial ${nombre}, te has registrado con éxito. Por favor, inicia sesión con tus credenciales`
+      `Genial ${nombre}, te has registrado con éxito. Por favor, inicia sesión con tus credenciales.`
     );
 
     // Llama a la función `Login` para redirigir al usuario a la sección de inicio de sesión

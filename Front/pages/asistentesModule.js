@@ -2,12 +2,7 @@ import { getEventos } from './eventosModule';
 //! Define una arrow function llamada `template` que devuelve un template string:
 export const template = () => `
 <section id="asistentes">
-  ${
-    localStorage.getItem('user')
-      ? `<h3>Bienvenido</h3>`
-      : `<h3>Por favor, inicie sesión</h3>`
-  }
-  <ul id="asistentes-container"></ul>
+    <ul id="asistentes-container"></ul>
 </section>
 `;
 
@@ -19,6 +14,7 @@ export const showAsistentesByEvento = async (eventoId) => {
       alert('Debe iniciar sesión para marcar asistencia a un evento.');
       return;
     }
+
     // Verifica si el ID del evento está definido
     if (!eventoId) {
       console.error('ID del evento no proporcionado');
@@ -35,26 +31,36 @@ export const showAsistentesByEvento = async (eventoId) => {
     }
 
     const asistentes = await response.json(); // Convierte los datos a formato JSON
-    console.log(asistentes);
 
     const asistentesContainer = document.querySelector('#asistentes-container');
     asistentesContainer.innerHTML = '';
 
-    asistentes.sort((a, b) => a.nombre.localeCompare(b.nombre)); //Ordena alfabéticamente.
-
+    if (asistentes.length === 0) {
+      const mensaje = document.createElement('p');
+      mensaje.textContent = 'Todavía no hay asistentes para este evento.';
+      asistentesContainer.appendChild(mensaje);
+    } else {
+      asistentes.sort((a, b) => a.nombre.localeCompare(b.nombre)); //Ordena alfabéticamente.
+    }
     // Itera sobre cada asistente y crea elementos de lista para mostrar la información:
     for (const asistente of asistentes) {
       const li = document.createElement('li');
       li.innerHTML = `
-      <h3>${asistente.nombre}</h3>
-      <h4>${asistente.email}</h4>`;
+      <h3 class="asistente-nombre">Nombre:${asistente.nombre}</h3>
+      <h4 class="asistente-email">Email:${asistente.email}</h4>`;
       asistentesContainer.appendChild(li);
     }
+
+    // Oculta la sección de eventos y muestra la sección de asistentes
+    document.getElementById('crear-evento-btn').style.display = 'none';
+    document.querySelector('.eventos-title').style.display = 'none';
     document.getElementById('eventos-container').style.display = 'none';
     document.getElementById('asistentes-section').style.display = 'block';
-    document.getElementById('welcome-message').style.display = 'none';
+
     // Actualizar el botón de "Volver"
     document.getElementById('volver').addEventListener('click', async () => {
+      document.getElementById('crear-evento-btn').style.display = 'block';
+      document.querySelector('.eventos-title').style.display = 'block';
       // Redirigir al usuario a la lista de eventos
       await getEventos();
     });

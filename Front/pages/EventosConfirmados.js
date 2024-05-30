@@ -1,8 +1,7 @@
 import { showAsistentesByEvento } from './asistentesModule.js';
 // Función para mostrar solo los eventos a los que el usuario va a asistir
 export const EventosConfirmados = async () => {
-document.getElementById('crear-evento-btn').style.display = 'none';
-
+  document.getElementById('crear-evento-btn').style.display = 'none';
 
   const asistencias = JSON.parse(localStorage.getItem('asistencias')) || {};
 
