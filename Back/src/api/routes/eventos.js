@@ -13,13 +13,13 @@ const { deleteAsistente } = require('../controllers/asistentes');
 
 const eventosRouter = require('express').Router();
 
-eventosRouter.get('/:eventoId/asistentes',[isAuth], getAsistentesByEvento);
+eventosRouter.get('/:eventoId/asistentes', getAsistentesByEvento);
 eventosRouter.get('/:userId/eventosConfirmados', getEventosConfirmadosByUser);
 eventosRouter.get('/:id', getEventoById);
 eventosRouter.get('/', getEventos);
-eventosRouter.post('/:eventoId/asistencias', [isAuth],[isAuth], postAsistente);
-eventosRouter.post('/nuevoEvento', upload.single('img'),[isAuth], postNuevoEvento);
+eventosRouter.post('/:eventoId/asistencias', postAsistente);
+eventosRouter.post('/nuevoEvento', upload.single('img'), postNuevoEvento);
 eventosRouter.put('/:id', upload.single('img'), putEvento);
-eventosRouter.delete('/:eventoId/asistencias', [isAuth],deleteAsistente);
+eventosRouter.delete('/:eventoId/asistencias', deleteAsistente);
 
 module.exports = eventosRouter;

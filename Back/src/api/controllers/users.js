@@ -1,5 +1,5 @@
 const User = require('../models/users');
-const { generarLlave, verificarLlave } = require('../../utils/jwt');
+const { generarLlave } = require('../../utils/jwt');
 const bcrypt = require('bcrypt');
 
 //REGISTER:
@@ -19,7 +19,9 @@ const register = async (req, res, next) => {
     }
 
     const userSaved = await newUser.save();
-    return res.status(201).json(userSaved);
+    return res
+      .status(201)
+      .json({ message: 'Usuario registrado exitosamente:', userSaved });
   } catch (error) {
     console.log(error);
     return res.status(400).json('Error al registrar al usuario', error);
@@ -35,20 +37,17 @@ const login = async (req, res, next) => {
     if (!user) {
       return res.status(400).json('Email o contraseña incorrectos');
     }
-    console.log(user);
 
-    if (bcrypt.compareSync(contraseña, user.contraseña)) {
-      const token = generarLlave(user._id);
-      return res.status(200).json({ token, user });
-    } else {
-      return res.status(400).json('Email o contraseña incorrectos');
+    const contraseñaValida = bcrypt.compareSync(contraseña, user.contraseña);
+    if (!contraseñaValida) {
+      return res.status(400).json('Contraseña incorrecta');
     }
+    const token = generarLlave(user._id);
+    return res.status(200).json({ token, user });
   } catch (error) {
     console.log(error);
     return res.status(400).json({ message: 'Error al iniciar sesión', error });
   }
 };
 
-
-
-module.exports = { register, login};
+module.exports = { register, login };
