@@ -5,11 +5,14 @@ import { template, getEventos, handleCrearEvento } from './eventosModule.js';
 const Eventos = () => {
   const userLoggedIn = localStorage.getItem('user');
   const logoutLink = document.getElementById('logoutlink');
+  const misEventos = document.getElementById('misEventoslink');
 
   if (!userLoggedIn && logoutLink) {
     logoutLink.style.display = 'none';
+    misEventos.style.display = 'none';
   } else {
     logoutLink.style.display = 'block';
+    misEventos.style.display = 'block';
   }
 
   

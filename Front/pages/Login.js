@@ -48,16 +48,16 @@ const loginSubmit = async (event) => {
       })
     });
     console.log('Respuesta recibida:', response);
+
     // Verifica si la respuesta es exitosa
     if (!response.ok) {
       const errorUser = await response.json();
-      console.error('Fallo en el login:', errorUser);
-      throw new Error(errorUser.message || 'Fallo en el login');
+      throw new Error(errorUser.message || 'Fallo en el inicio de sesión');
     }
+
     // Convierte la respuesta a formato JSON
     const responseData = await response.json();
     const user = responseData.user;
-    console.log('Inicio de sesión exitosa:', user);
 
     // Almacena la información del usuario en el localStorage
     localStorage.setItem('user', JSON.stringify(user));
@@ -69,7 +69,6 @@ const loginSubmit = async (event) => {
     Eventos();
   } catch (error) {
     console.log('Error durante el login:', error);
-    // Maneja cualquier error que ocurra durante el proceso de login
     alert(`Inicio de sesión fallido: ${error.message}`);
   }
 };

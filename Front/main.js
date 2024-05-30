@@ -43,7 +43,8 @@ document.addEventListener('DOMContentLoaded', function () {
     .querySelector('#eventoslink')
     .addEventListener('click', () => Eventos());
 
-  document.querySelector('#misEventoslink').addEventListener('click', () => {
+  document.querySelector('#misEventoslink').addEventListener('click', (event) => {
+    event.preventDefault();
     EventosConfirmados();
   });
 });

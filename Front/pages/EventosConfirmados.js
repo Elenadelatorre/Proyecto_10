@@ -1,75 +1,58 @@
-export const template = () => `
-  <section id="eventosConfirmados">
-  <h3 id="welcome-message">${
-    localStorage.getItem('user') ? 'Bienvenido' : 'Por favor, inicie sesión'
-  }</h3>
-    <h2 class="eventosConfirmados">Mis eventos</h2>
-    <ul id="eventos-confirmados-container"></ul>
-  </section>`;
-
-  //! Definir una función para obtener los eventos confirmados:
-export const getEventosConfirmados = async () => {
-  try {
-    const response = await fetch(
-      'http://localhost:3000/api/v1/eventos/eventosConfirmados',
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')},`,
-          'Content-Type': 'application/json'
-        }
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error('Error al obtener eventos confirmados');
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error('Error al obtener los eventos confirmados:', error);
-    return []; 
-  }
-};
-
-//! Crear una función para mostrar los eventos confirmados:
+import { showAsistentesByEvento } from './asistentesModule.js';
+// Función para mostrar solo los eventos a los que el usuario va a asistir
 export const EventosConfirmados = async () => {
-  document.querySelector('main').innerHTML = template();
-  const eventosConfirmadosContainer = document.getElementById(
-    'eventos-confirmados-container'
-  );
-try{
-  const eventosConfirmados = await getEventosConfirmados();
+document.getElementById('crear-evento-btn').style.display = 'none';
 
-   // Verificar si eventosConfirmados es una lista válida
-   if (!Array.isArray(eventosConfirmados)) {
-    console.error('No se pudo obtener la lista de eventos confirmados');
-    eventosConfirmadosContainer.innerHTML = '<p>No se encontraron eventos confirmados.</p>';
+
+  const asistencias = JSON.parse(localStorage.getItem('asistencias')) || {};
+
+  document.querySelector('.eventos').textContent = 'Mis Eventos';
+  const eventosContainer = document.querySelector('#eventos-container');
+  eventosContainer.innerHTML = '';
+
+  const response = await fetch('http://localhost:3000/api/v1/eventos');
+  const eventos = await response.json();
+
+  const eventosAsistiendo = eventos.filter((evento) => asistencias[evento._id]);
+
+  if (eventosAsistiendo.length === 0) {
+    eventosContainer.innerHTML =
+      '<p class="no-eventos-message">Aún no vas a asistir a ningún evento, apúntate.</p>';
     return;
   }
-  // Limpiar el contenedor antes de mostrar los nuevos eventos
-  eventosConfirmadosContainer.innerHTML = '';
 
-  eventosConfirmados.forEach((asistencia) => {
-    const evento = asistencia.eventoConfirmado;
-    const eventoElement = document.createElement('div');
-    eventoElement.classList.add('evento');
+  eventosAsistiendo.forEach((evento) => {
+    const li = document.createElement('li');
+    li.className = 'evento-item';
+    li.dataset.eventoId = evento._id;
 
-    const tituloElement = document.createElement('h3');
-    tituloElement.textContent = evento.eventoConfirmadotitulo;
+    li.innerHTML = `
+      <img src="${evento.img}" alt="${evento.titulo}" class="evento-img" />
+      <div class="evento-info">
+        <h2>${evento.titulo}</h2>
+        <h3>${new Date(evento.fecha).toLocaleDateString()}</h3>
+        <h4>${evento.ubicacion}</h4>
+        <h5>${evento.descripcion}</h5>
+      </div>
+      <button class="ver-asistentes-btn" data-evento-id="${
+        evento._id
+      }">Ver Asistentes</button>
+    `;
+    eventosContainer.appendChild(li);
 
-    const fechaElement = document.createElement('p');
-    fechaElement.textContent = evento.fecha;
+    // Agrega un evento clic al botón de ver asistentes:
+    const verAsistentesBtn = li.querySelector('.ver-asistentes-btn');
+    verAsistentesBtn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      await showAsistentesByEvento(evento._id);
+    });
 
-    // Agregar más detalles del evento según tu modelo de datos
-    eventoElement.appendChild(tituloElement);
-    eventoElement.appendChild(fechaElement);
-
-    eventosConfirmadosContainer.appendChild(eventoElement);
+    // Agrega un evento clic al elemento `evento-item`
+    li.addEventListener('click', async () => {
+      await getEventoEspecifico(evento._id);
+      document.getElementById('crear-evento-btn').style.display = 'none';
+    });
   });
-} catch (error) {
-  console.error('Error al obtener y mostrar los eventos confirmados:', error);
-  eventosConfirmadosContainer.innerHTML = '<p>Ocurrió un error al cargar los eventos confirmados.</p>';
-}
 };
 
 export default EventosConfirmados;

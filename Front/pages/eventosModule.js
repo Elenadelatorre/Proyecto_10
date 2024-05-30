@@ -77,14 +77,16 @@ export const getEventos = async () => {
 
       // Agrega un evento clic al botón de asistencia:
       const asistenciaBtn = li.querySelector('.asistencia-btn');
-      asistenciaBtn.addEventListener('click', async (e) => {
+      asistenciaBtn.currentHandler = async (e) => {
         e.stopPropagation();
+        const user = JSON.parse(localStorage.getItem('user'));
         if (asistiendo) {
           await handleRemoveFromAsistencias(evento._id, asistenciaBtn);
         } else {
-          await handleAddToAsistencias(evento._id, asistenciaBtn);
+          await handleAddToAsistencias(evento._id, asistenciaBtn, user._id);
         }
-      });
+      };
+      asistenciaBtn.addEventListener('click', asistenciaBtn.currentHandler);
 
       // Agrega un evento clic al botón de ver asistentes:
       const verAsistentesBtn = li.querySelector('.ver-asistentes-btn');
@@ -92,6 +94,7 @@ export const getEventos = async () => {
         e.stopPropagation();
         await showAsistentesByEvento(evento._id);
       });
+
       // Agrega un evento clic al elemento `evento-item`
       li.addEventListener('click', async () => {
         await getEventoEspecifico(evento._id);
@@ -102,6 +105,7 @@ export const getEventos = async () => {
     console.error('Error al obtener los eventos:', error);
   }
 };
+
 // Selecciona todos los botones "Ver Asistentes" y agrega el evento clic a cada uno
 const verAsistentesBtns = document.querySelectorAll('.ver-asistentes-btn');
 verAsistentesBtns.forEach((btn) => {
@@ -113,7 +117,7 @@ verAsistentesBtns.forEach((btn) => {
 
 //! ASISTENCIA:
 //! Define una función para manejar la asistencia a los eventos:
-export const handleAddToAsistencias = async (eventoId, button) => {
+export const handleAddToAsistencias = async (eventoId, button, asistenteId) => {
   try {
     const user = JSON.parse(localStorage.getItem('user'));
 
@@ -153,25 +157,22 @@ export const handleAddToAsistencias = async (eventoId, button) => {
     // Actualizar el botón
     button.textContent = 'Cancelar asistencia 👎🏻';
     button.classList.add('cancelar-asistencia');
-    button.removeEventListener('click', async (e) => {
-      e.stopPropagation();
-      await handleAddToAsistencias(eventoId, button);
-    });
-    button.addEventListener('click', async (e) => {
+
+    // Elimina el manejador de eventos anterior y añade uno nuevo
+    button.removeEventListener('click', button.currentHandler);
+    button.currentHandler = async (e) => {
       e.stopPropagation();
       await handleRemoveFromAsistencias(eventoId, button);
-    });
+    };
+    button.addEventListener('click', button.currentHandler);
   } catch (error) {
     console.error('Error en la llamada fetch:', error);
     alert('Hubo un error al marcar la asistencia');
   }
 };
 
-export const handleRemoveFromAsistencias = async (
-  eventoId,
-  button,
-  asistenteId
-) => {
+//! Define una función para manejar la cancelación de la asistencia:
+export const handleRemoveFromAsistencias = async (eventoId, button) => {
   try {
     const user = JSON.parse(localStorage.getItem('user'));
 
@@ -186,7 +187,8 @@ export const handleRemoveFromAsistencias = async (
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json'
-        }
+        },
+        body: JSON.stringify({ asistenteId: user._id })
       }
     );
 
@@ -196,36 +198,27 @@ export const handleRemoveFromAsistencias = async (
       throw new Error(errorData.message || 'Error al cancelar asistencia');
     }
 
-    let responseData;
-    if (deleteResponse.status === 204) {
-      // No hay contenido en la respuesta (estatus 204 No Content)
-      responseData = { message: 'Asistencia cancelada correctamente' };
-    } else {
-      // La respuesta contiene datos, intenta analizarla como JSON
-      try {
-        responseData = await deleteResponse.json();
-      } catch (error) {
-        console.error('Error al parsear la respuesta JSON:', error);
-        responseData = { message: 'Error al parsear la respuesta JSON' };
-      }
-    }
+    // No hay contenido en la respuesta (estatus 204 No Content)
+    const responseData = { message: 'Asistencia cancelada correctamente' };
 
     // Actualizar el almacenamiento local
     const asistencias = JSON.parse(localStorage.getItem('asistencias')) || {};
     delete asistencias[eventoId];
     localStorage.setItem('asistencias', JSON.stringify(asistencias));
 
+    alert(responseData.message); // Mostrar mensaje de éxito
+
     // Actualizar el botón
     button.textContent = 'Asistir 👍🏻';
     button.classList.remove('cancelar-asistencia');
-    button.removeEventListener('click', async (e) => {
+
+    // Elimina el manejador de eventos anterior y añade uno nuevo
+    button.removeEventListener('click', button.currentHandler);
+    button.currentHandler = async (e) => {
       e.stopPropagation();
-      await handleRemoveFromAsistencias(eventoId, button);
-    });
-    button.addEventListener('click', async (e) => {
-      e.stopPropagation();
-      await handleAddToAsistencias(eventoId, button);
-    });
+      await handleAddToAsistencias(eventoId, button, user._id);
+    };
+    button.addEventListener('click', button.currentHandler);
   } catch (error) {
     console.error('Error al cancelar la asistencia:', error);
     alert('Hubo un error al cancelar la asistencia');
