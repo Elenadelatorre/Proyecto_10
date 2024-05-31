@@ -32,7 +32,7 @@ const register = async (req, res, next) => {
 const login = async (req, res, next) => {
   try {
     const { email, contraseña } = req.body;
-    const user = await User.findOne({ email }); //Comprobar si el usuario (email) existe en la BBDD.
+    const user = await User.findOne({ email }); 
 
     if (!user) {
       return res.status(400).json('Email o contraseña incorrectos');

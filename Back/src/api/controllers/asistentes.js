@@ -26,8 +26,21 @@ const getAsistenteById = async (req, res, next) => {
     return res.status(400).json('Error');
   }
 };
+// GET asistentes por evento:
+const getAsistentesByEvento = async (req, res, next) => {
+  try {
+    const { eventoId } = req.params;
+    console.log(eventoId);
 
-//PUT asistente:
+    const asistentes = await Asistente.find({ eventoConfirmado: eventoId });
+    return res.status(200).json(asistentes);
+  } catch (error) {
+    console.error('Error al obtener los asistentes:', error);
+    res.status(404).json({ message: 'Error al obtener los asistentes', error });
+  }
+};
+
+//PUT asistentes:
 const updateAsistente = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -46,17 +59,16 @@ const updateAsistente = async (req, res, next) => {
       .json({ message: 'Error al actualizar asistente', error });
   }
 };
-//! DELETE un juego por id:
+// DELETE un juego por id:
 const deleteAsistente = async (req, res, next) => {
   try {
     const { eventoId } = req.params; // Extraer el ID del evento desde los parámetros de la URL
     console.log(`Buscando evento con ID: ${eventoId}`);
-    
+
     // Realizar la lógica para buscar y eliminar el asistente asociado al evento
     // Esto puede variar dependiendo de cómo esté estructurada tu base de datos y tu aplicación
     const asistenteDeleted = await Asistente.findOneAndDelete({
-      eventoConfirmado: eventoId,
-      
+      eventoConfirmado: eventoId
     });
 
     if (!asistenteDeleted) {
@@ -74,6 +86,7 @@ const deleteAsistente = async (req, res, next) => {
 module.exports = {
   getAllAsistentes,
   getAsistenteById,
+  getAsistentesByEvento,
   updateAsistente,
   deleteAsistente
 };

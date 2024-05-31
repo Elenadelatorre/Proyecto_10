@@ -1,7 +1,6 @@
 const Evento = require('../models/eventos');
 const Asistente = require('../models/asistentes');
 const User = require('../models/users');
-const multer = require('multer');
 
 //GET eventos disponibles:
 const getEventos = async (req, res, next) => {
@@ -14,7 +13,7 @@ const getEventos = async (req, res, next) => {
   }
 };
 
-//GET evento específico por id:
+//GET evento específico:
 const getEventoById = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -26,7 +25,25 @@ const getEventoById = async (req, res, next) => {
   }
 };
 
-//POST evento
+// GET eventos confirmados por usuario:
+const getEventosConfirmadosByUser = async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+    const user = await User.findById(userId).populate('eventoConfirmado');
+    if (!user) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+
+    res.status(200).json(user.eventoConfirmado);
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ message: 'Error al obtener eventos confirmados', error });
+  }
+};
+
+//POST nuevo evento:
 const postNuevoEvento = async (req, res, next) => {
   try {
     const { titulo, fecha, ubicacion, descripcion, img } = req.body;
@@ -49,62 +66,25 @@ const postNuevoEvento = async (req, res, next) => {
   }
 };
 
-// GET eventos confirmados por usuario:
-const getEventosConfirmadosByUser = async (req, res, next) => {
-  try {
-    const { userId } = req.params;
-    const user = await User.findById(userId).populate('eventoConfirmado');
-    if (!user) {
-      return res.status(404).json({ message: 'Usuario no encontrado' });
-    }
-
-    res.status(200).json(user.eventoConfirmado);
-  } catch (error) {
-    console.error(error);
-    res
-      .status(500)
-      .json({ message: 'Error al obtener eventos confirmados', error });
-  }
-};
-
-// GET asistentes por evento
-const getAsistentesByEvento = async (req, res, next) => {
-  try {
-    const { eventoId } = req.params;
-    console.log(eventoId);
-
-    const asistentes = await Asistente.find({ eventoConfirmado: eventoId });
-    return res.status(200).json(asistentes);
-  } catch (error) {
-    console.error('Error al obtener los asistentes:', error);
-    res.status(404).json({ message: 'Error al obtener los asistentes', error });
-  }
-};
-
-// POST para inscribirse en un evento
+// POST para inscribirse en un evento:
 const postAsistente = async (req, res, next) => {
   try {
-    // Verifica si el usuario ya está inscrito en este evento
     const { eventoId } = req.params;
     const { nombre, email } = req.body;
 
-    console.log(`Buscando evento con ID: ${eventoId}`);
-    // Verifica si el evento existe:
     const evento = await Evento.findById(eventoId);
     if (!evento) {
       return res.status(404).json({ message: 'Evento no encontrado' });
     }
 
-    // Verifica si el usuario existe
     console.log(`Buscando usuario con nombre: ${nombre} y email: ${email}`);
     let user = await User.findOne({ nombre, email });
     if (!user) {
-      // Si el usuario no existe, crea uno nuevo (opcional, dependiendo de tu lógica)
       user = new User({ nombre, email });
       await user.save();
     }
 
-    console.log('Verificando si el usuario ya está registrado en este evento');
+ 
     // Verifica si el usuario ya está registrado para este evento
     if (user.eventoConfirmado === eventoId) {
       console.log('El usuario ya está registrado para este evento');
@@ -118,9 +98,6 @@ const postAsistente = async (req, res, next) => {
     user.eventoConfirmado = eventoId;
     await user.save();
 
-    console.log(
-      'Verificando si el asistente ya está registrado para este evento'
-    );
     // Verifica si el asistente ya está registrado para este evento
     const asistenteExistente = await Asistente.findOne({
       nombre,
@@ -133,7 +110,7 @@ const postAsistente = async (req, res, next) => {
         .json({ message: 'Asistente ya registrado para este evento' });
     }
 
-    console.log('Creando nuevo asistente y asociándolo al evento');
+   
     // Crea un nuevo asistente y lo asocia al evento
     const nuevoAsistente = new Asistente({
       nombre,
@@ -151,6 +128,8 @@ const postAsistente = async (req, res, next) => {
     res.status(404).json({ message: 'Error al agregar asistencia', error });
   }
 };
+
+//Modificar evento:
 const putEvento = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -173,12 +152,25 @@ const putEvento = async (req, res, next) => {
   }
 };
 
+// DELETE un evento por id:
+const deleteEvento = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const eventoDeleted = await Evento.findByIdAndDelete(id);
+    deleteFile(eventoDeleted.img);
+    res.status(200).json({ message: 'Evento eliminado', eventoDeleted });
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json('Error en la solicitud');
+  }
+};
+
 module.exports = {
   getEventos,
   getEventoById,
   postNuevoEvento,
-  getAsistentesByEvento,
   postAsistente,
   getEventosConfirmadosByUser,
-  putEvento
+  putEvento,
+  deleteEvento
 };

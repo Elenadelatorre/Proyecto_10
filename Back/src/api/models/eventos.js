@@ -32,7 +32,7 @@ const eventoSchema = new mongoose.Schema(
     collection: 'eventos'
   }
 );
-// Creación del índice en el campo fecha
+
 eventoSchema.index({ fecha: 1 });
 const Evento = mongoose.model('eventos', eventoSchema, 'eventos');
 
