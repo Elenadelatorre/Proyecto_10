@@ -2,7 +2,6 @@ const { isAuth, isAdmin } = require('../../middlewares/auth');
 const {
   getEventos,
   getEventoById,
-  getAsistentesByEvento,
   postAsistente,
   getEventosConfirmadosByUser,
   postNuevoEvento,
@@ -14,17 +13,15 @@ const { deleteAsistente } = require('../controllers/asistentes');
 
 const eventosRouter = require('express').Router();
 
-
-eventosRouter.get('/:userId/eventosConfirmados', [isAuth],  getEventosConfirmadosByUser);
+eventosRouter.get(
+  '/:userId/eventosConfirmados',
+  [isAuth],
+  getEventosConfirmadosByUser
+);
 eventosRouter.get('/:id', getEventoById);
 eventosRouter.get('/', getEventos);
 eventosRouter.post('/:eventoId/asistencias', postAsistente);
-eventosRouter.post(
-  '/nuevoEvento',
-  upload.single('img'),
-  [isAuth],
-  postNuevoEvento
-);
+eventosRouter.post('/nuevoEvento', upload.single('img'), postNuevoEvento);
 eventosRouter.put('/:id', upload.single('img'), putEvento);
 eventosRouter.delete('/:eventoId/asistencias', [isAdmin], deleteAsistente);
 eventosRouter.delete('/:eventoId', [isAdmin], deleteEvento);

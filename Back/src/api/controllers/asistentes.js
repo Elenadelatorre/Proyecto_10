@@ -23,14 +23,13 @@ const getAsistenteById = async (req, res, next) => {
     return res.status(200).json(asistente);
   } catch (error) {
     console.log(error);
-    return res.status(400).json('Error');
+    return res.status(400).json('Error en la solicitud: ' + error.message);
   }
 };
 // GET asistentes por evento:
 const getAsistentesByEvento = async (req, res, next) => {
   try {
     const { eventoId } = req.params;
-    console.log(eventoId);
 
     const asistentes = await Asistente.find({ eventoConfirmado: eventoId });
     return res.status(200).json(asistentes);
@@ -63,7 +62,6 @@ const updateAsistente = async (req, res, next) => {
 const deleteAsistente = async (req, res, next) => {
   try {
     const { eventoId } = req.params; // Extraer el ID del evento desde los parámetros de la URL
-    console.log(`Buscando evento con ID: ${eventoId}`);
 
     // Realizar la lógica para buscar y eliminar el asistente asociado al evento
     // Esto puede variar dependiendo de cómo esté estructurada tu base de datos y tu aplicación

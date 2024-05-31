@@ -32,7 +32,7 @@ const register = async (req, res, next) => {
 const login = async (req, res, next) => {
   try {
     const { email, contraseña } = req.body;
-    const user = await User.findOne({ email }); 
+    const user = await User.findOne({ email });
 
     if (!user) {
       return res.status(400).json('Email o contraseña incorrectos');
@@ -40,9 +40,10 @@ const login = async (req, res, next) => {
 
     const contraseñaValida = bcrypt.compareSync(contraseña, user.contraseña);
     if (!contraseñaValida) {
-      return res.status(400).json('Contraseña incorrecta');
+      return res.status(400).json('Email o contraseña incorrectos');
     }
     const token = generarLlave(user._id);
+    console.log(token);
     return res.status(200).json({ token, user });
   } catch (error) {
     console.log(error);

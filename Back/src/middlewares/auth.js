@@ -5,26 +5,17 @@ const { verificarLlave } = require('../utils/jwt');
 //isUser:
 const isAuth = async (req, res, next) => {
   try {
-    const token = req.headers.authorization;
+    const token = req.headers.authorization.replace('Bearer ', '');
+    console.log(token);
 
-    if (!token) {
-      return res
-        .status(401)
-        .json({ message: 'No estás autorizado. Debe iniciar sesión.' });
-    }
-    const parsedToken = token.replace('Bearer ', '');
-    const { id } = verificarLlave(parsedToken);
+    const { id } = verificarLlave(token);
 
     const user = await User.findById(id);
-    if (!user) {
-      return res.status(401).json({ message: 'Usuario no encontrado' });
-    }
 
-    user.password = null;
     req.user = user;
     next();
   } catch (error) {
-    return res.status(400).json('No estás autorizado');
+    return res.status(400).json('error');
   }
 };
 
@@ -43,7 +34,7 @@ const isAdmin = async (req, res, next) => {
 const verifyAdmin = async (req, res, next) => {
   try {
     const token = req.headers.authorization.split(' ')[1];
-    const decodedToken = jwt.verify(token, process.env.JWT_SECRET); 
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
 
     const user = await User.findById(decodedToken.id);
     if (user.rol !== 'admin') {
@@ -56,6 +47,5 @@ const verifyAdmin = async (req, res, next) => {
     res.status(401).json({ message: 'No estás autorizado' });
   }
 };
-
 
 module.exports = { isAuth, isAdmin, verifyAdmin };
