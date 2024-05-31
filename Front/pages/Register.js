@@ -1,17 +1,23 @@
-//! Importa la función `Login` desde el módulo "./Login":
-// para mostrarla una vez registremos un nuevo usuario
 import Login from './Login';
 
-//! Define una arrow function llamada `template` que devuelve una template string:
+//! Crear una función llamada 'template' para actualizar los elementos del DOM para esta sección:
 const template = () => `
   <section id="register">
     <h2>Registro</h2>
     <form id="register-form" class="form">
       <label for="nombre">Nombre de usuario</label>
-      <input type="text" placeholder="Nombre" id="nombre" name="nombre" required/>
+      <input type="text" placeholder="Nombre completo" id="nombre" name="nombre" required/>
 
       <label for="email">Correo electrónico</label>
       <input type="email" placeholder="Correo electrónico" id="email" name="email" required/>
+
+      <div id="rol-container" style="display: none;">
+        <label for="rol">Rol:</label>
+        <select id="rol" name="rol">
+          <option value="user">Usuario</option>
+          <option value="admin">Administrador</option>
+        </select>
+      </div>
 
       <label for="password">Contraseña</label>
       <input type="password" id="password" placeholder="Contraseña" name="password" required/>
@@ -23,7 +29,7 @@ const template = () => `
   </section>
 `;
 
-// Función para actualizar la visibilidad del enlace de cerrar sesión
+// Crear una función para actualizar la visibilidad del enlace de 'Cerrar sesión':
 export const updateLogoutLinkVisibility = (isVisible) => {
   const logoutLink = document.querySelector('#logoutlink');
   if (logoutLink) {
@@ -31,24 +37,33 @@ export const updateLogoutLinkVisibility = (isVisible) => {
   }
 };
 
-//! Define una función asíncrona llamada `registerSubmit` para procesar el envío del formulario de registro
+//! Crear una función asíncrona llamada 'registerSubmit' para procesar el envío del formulario de registro:
 const registerSubmit = async (event) => {
-  event.preventDefault(); // Evita la recarga de la página por defecto
+  event.preventDefault();
 
-  const nombre = document.querySelector('#nombre').value; //Obtiene el valor del nombre.
+  const nombre = document.querySelector('#nombre').value;
   const email = document.querySelector('#email').value;
-  const contraseña = document.querySelector('#password').value; //Obtiene el valor de la contraseña.
+  const contraseña = document.querySelector('#password').value;
+  const rol = document.getElementById('rol').value;
 
-  // Verifica si alguno de los campos está vacío o si la contraseña no tiene al menos 8 caracteres
+  const currentUser = JSON.parse(localStorage.getItem('user'));
+
+  // Verificar si el usuario está registrado como administrador:
+  if (currentUser && currentUser.rol !== 'admin' && rol === 'admin') {
+    alert('No tienes permiso para registrar un usuario como administrador.');
+    return;
+  }
+
+  // Verificar si alguno de los campos está vacío o si la contraseña no tiene al menos 8 caracteres:
   if (!nombre || !email || !contraseña || contraseña.length < 8) {
     alert(
       'Por favor asegúrate de que la contraseña tenga al menos 8 caracteres.'
     );
-    return; // Detiene la ejecución de la función
+    return;
   }
 
   try {
-    // Realiza una solicitud a la API para registrar un nuevo usuario
+    // Realizar una solicitud a la API para registrar un nuevo usuario:
     const response = await fetch(
       'http://localhost:3000/api/v1/users/register',
       {
@@ -59,7 +74,8 @@ const registerSubmit = async (event) => {
         body: JSON.stringify({
           nombre,
           email,
-          contraseña: contraseña
+          contraseña: contraseña,
+          rol
         })
       }
     );
@@ -67,34 +83,40 @@ const registerSubmit = async (event) => {
       const errorData = await response.json();
       throw new Error(errorData.message || 'Error en el registro');
     }
-    // Muestra una alerta indicando que el registro fue exitoso y anima al usuario a iniciar sesión
+
     alert(
       `Genial ${nombre}, te has registrado con éxito. Por favor, inicia sesión con tus credenciales.`
     );
 
-    // Llama a la función `Login` para redirigir al usuario a la sección de inicio de sesión
+    // Llama a la función 'Login' para redirigir al usuario a la sección de inicio de sesión cuando se haya registrado:
     Login();
   } catch (error) {
     alert(`Error: ${error.message}`);
   }
 };
 
-//! Define una función llamada `Register` que actualiza el contenido de la sección de registro en el DOM:
+//! Crear una función llamada 'Register' que actualiza el contenido de la sección de registro en el DOM:
 const Register = () => {
+  //Actualizar la visibilidad del enlace de cierre de sesión:
   updateLogoutLinkVisibility(false);
-  // Selecciona el elemento 'main' en el DOM y asigna el HTML generado por la función `template`
+
   document.querySelector('main').innerHTML = template();
 
-  // Agrega un event listener al formulario para procesar el evento de envío
+  // Verificar si el usuario está registrado como administrador:
+  const currentUser = JSON.parse(localStorage.getItem('user'));
+  if (currentUser && currentUser.rol === 'admin') {
+    document.getElementById('rol-container').style.display = 'block';
+  }
+
+  // Agrega un eventListener al formulario para procesar el evento de envío:
   document
     .querySelector('#register-form')
-    .addEventListener('submit', registerSubmit); // Llama a la función `registerSubmit` para procesar el envío del formulario
+    .addEventListener('submit', registerSubmit);
 
+  // Agrega un evento de clic al formulario para procesar el evento de envío:
   document.querySelector('#login-link').addEventListener('click', () => {
-    // Llama a la función `Login` para redirigir al usuario a la sección de inicio de sesión
     Login();
   });
 };
 
-//! Exporta la función `Register` como el valor predeterminado del módulo
 export default Register;

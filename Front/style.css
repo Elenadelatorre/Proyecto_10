@@ -42,23 +42,29 @@ header {
   height: 10vh;
   z-index: 10;
 }
-header h1 {
+
+#home {
   font-family: 'Arial', sans-serif;
-  font-size: 3em;
+  font-size: 1.4em;
   color: #fff;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+  border: none;
   margin: 0;
   transition: transform 0.3s, color 0.3s;
 }
 
-header nav {
-  display: flex;
-  gap: 1rem;
+#home:hover {
+  transform: scale(1.1);
 }
 
 header #logoutlink {
   background-color: #070707;
   border: none;
+}
+
+header #logoutlink:hover {
+  background-color: white;
+  color: #070707;
 }
 
 header a {
@@ -72,6 +78,18 @@ header a {
   transition: background-color 0.3s;
 }
 
+header #misEventoslink,
+header #eventoslink {
+  background-color: #4caf50;
+  color: white;
+}
+
+header #misEventoslink:hover,
+header #eventoslink:hover {
+  background-color: white;
+  color: #4caf50;
+}
+
 header #loginlink {
   background-color: white;
   color: #4caf50;
@@ -81,7 +99,8 @@ header #loginlink:hover {
   background-color: #4caf50;
   color: white;
 }
-header a:hover {
+#eventoslink,
+#misEventoslink {
   background-color: white;
   color: #4caf50;
 }
@@ -230,16 +249,15 @@ footer h3 {
   max-height: 90vh;
 }
 #asistentes-container h3 {
-  margin: 0; /* Quita el margen superior e inferior de los nombres */
-  font-size: 18px; /* Tamaño de fuente para los nombres */
-  color: #333; /* Color del texto para los nombres */
+  margin: 0; 
+  font-size: 18px; 
+  color: #333;
 }
 #asistentes-container h4 {
-  margin: 5px 0; /* Añade un pequeño margen superior e inferior a los correos electrónicos */
-  font-size: 14px; /* Tamaño de fuente para los correos electrónicos */
-  color: #666; /* Color del texto para los correos electrónicos */
+  margin: 5px 0; 
+  font-size: 14px; 
+  color: #666; 
 }
-
 
 #crear-evento-btn {
   background-color: #4caf50;
@@ -369,20 +387,20 @@ footer h3 {
 }
 #asistentes-container li {
   color: #333;
-  margin-bottom: 10px; /* Añade un margen inferior entre cada elemento de la lista */
-  background-color: #f4f4f4; /* Color de fondo */
-  border-radius: 5px; /* Borde redondeado */
-  padding: 10px; /* Relleno interno */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra */
+  margin-bottom: 10px; 
+  background-color: #f4f4f4; 
+  border-radius: 5px; 
+  padding: 10px; 
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
 }
 
 #asistentes-container li:hover {
-  background-color: #e0e0e0; /* Cambia el color de fondo al pasar el cursor */
+  background-color: #e0e0e0; 
 }
 
 #asistentes-container li::before {
   content: '👤';
-  margin-right: 5px; /* Espacio entre el icono y el texto */
+  margin-right: 5px; 
 }
 
 #volver {
@@ -432,19 +450,19 @@ footer h3 {
 
 /* Estilos para la ventana modal */
 .modal {
-  display: none; /* Por defecto, la ventana modal estará oculta */
-  position: fixed; /* Se posicionará fija en la ventana del navegador */
-  max-width: 400px; /* Cualquier ancho posible */
-  width: 100%; /* La mitad del ancho de la ventana */
-  height: auto; /* La mitad del alto de la ventana */
-  top: 50%; /* La mitad del alto de la ventana */
-  left: 50%; /* La mitad del ancho de la ventana */
-  transform: translate(-50%, -50%); /* Centra la ventana modal */
-  background-color: white; /* Fondo semitransparente */
+  display: none; 
+  position: fixed; 
+  max-width: 400px; 
+  width: 100%; 
+  height: auto; 
+  top: 50%; 
+  left: 50%; 
+  transform: translate(-50%, -50%); 
+  background-color: white; 
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
   padding: 20px;
   border-radius: 10px;
-  z-index: 1000; /* Coloca la ventana modal encima de otros elementos */
+  z-index: 1000; 
 }
 
 .modal-title {
@@ -455,17 +473,17 @@ footer h3 {
 
 /* Estilos para el contenido dentro de la ventana modal */
 .modal-content {
-  background-color: #fff; /* Fondo blanco */
+  background-color: #fff; 
   padding: 20px;
   border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombra */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); 
   color: #242424;
   max-width: 400px;
   margin: 20px auto;
 }
 .modal-content label {
   font-weight: bold;
-  color: #333; /* Color de texto oscuro */
+  color: #333; 
 }
 
 /* Estilos para los campos de entrada */
@@ -476,7 +494,7 @@ footer h3 {
   padding: 10px;
   margin-top: 5px;
   margin-bottom: 15px;
-  border: 1px solid #ccc; /* Borde gris claro */
+  border: 1px solid #ccc; 
   border-radius: 5px;
   font-size: 16px;
   transition: border-color 0.3s;
@@ -485,13 +503,13 @@ footer h3 {
 .modal-content input[type='text']:focus,
 .modal-content input[type='date']:focus,
 .modal-content textarea:focus {
-  border-color: #4caf50; /* Borde verde cuando enfocado */
+  border-color: #4caf50; 
 }
 
 /* Estilos para los botones */
 .modal-content button {
-  background-color: #4caf50; /* Fondo verde */
-  color: white; /* Texto blanco */
+  background-color: #4caf50; 
+  color: white; 
   border: none;
   border-radius: 5px;
   padding: 10px 20px;
@@ -501,7 +519,7 @@ footer h3 {
   transition: background-color 0.3s;
 }
 .modal-content button:hover {
-  background-color: #45a049; /* Cambio de color al pasar el ratón */
+  background-color: #45a049; 
 }
 
 .ver-asistentes-btn,

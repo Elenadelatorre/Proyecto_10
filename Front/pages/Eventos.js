@@ -1,30 +1,34 @@
 import { template, getEventos, handleCrearEvento } from './eventosModule.js';
 
-//! Define una función que actualiza el contenido de la sección de libros en el DOM:
+//! Crear una función para actualizar el contenido de la sección de eventos en el DOM:
 const Eventos = () => {
+  //Crear variables:
   const userLoggedIn = localStorage.getItem('user');
   const logoutLink = document.getElementById('logoutlink');
   const misEventos = document.getElementById('misEventoslink');
   const loginlink = document.getElementById('loginlink');
   const registerlink = document.getElementById('registerlink');
 
+  //Si el usuario NO ha iniciado sesión y el link de logout existe:
   if (!userLoggedIn && logoutLink) {
     logoutLink.style.display = 'none';
     misEventos.style.display = 'none';
     loginlink.style.display = 'block';
   } else {
+    //Sino:
     logoutLink.style.display = 'block';
     misEventos.style.display = 'block';
     loginlink.style.display = 'none';
     registerlink.style.display = 'none';
   }
 
-  // Selecciona el elemento 'main' en el DOM y asigna el HTML generado por la función `template`
+  // Definir  el HTML generado por la función 'template':
   document.querySelector('main').innerHTML = template();
-  // Llama a la función `getBooks` para cargar dinámicamente los libros en la página
+
+  // Llama a la función 'getEventos' para cargar dinámicamente los eventos en la página:
   getEventos();
 
-  // Agrega el evento clic al botón de crear evento para mostrar el formulario:
+  // Agregar el evento clic al botón de 'Crear nuevo evento' para mostrar el formulario:
   document.getElementById('crear-evento-btn').addEventListener('click', () => {
     if (!userLoggedIn) {
       alert('Debe iniciar sesión para crear un evento.');
@@ -34,7 +38,7 @@ const Eventos = () => {
     document.getElementById('asistentes-section').style.display = 'none';
   });
 
-  // Agregar un event listener al botón que crea el evento
+  // Agregar un evento clic al botón que crea el evento dentro del formulario:
   document
     .querySelector('#crear-evento')
     .addEventListener('click', async (event) => {
@@ -42,7 +46,7 @@ const Eventos = () => {
       await handleCrearEvento();
     });
 
-  // Agregar un evento click a cancelar para cerrar el modal
+  // Agregar un evento clic al botón 'cancelar' para cerrar el formulario:
   document
     .getElementById('cancelar-crear-evento')
     .addEventListener('click', () => {
@@ -51,12 +55,12 @@ const Eventos = () => {
       document.getElementById('eventos-container').style.display = 'block';
     });
 
-  // Agrega el evento clic al botón de volver para mostrar la sección de libros:
+  // Agregar un evento clic al botón de "volver a eventos" para mostrar la sección de eventos:
   document.getElementById('volver').addEventListener('click', () => {
     document.getElementById('eventos-container').style.display = 'block';
     document.getElementById('asistentes-section').style.display = 'none';
     document.querySelector('.eventos').style.display = 'block';
   });
 };
-//! Exporta la función `Books` como el valor predeterminado del módulo
+
 export default Eventos;

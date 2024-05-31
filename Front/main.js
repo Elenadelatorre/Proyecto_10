@@ -1,50 +1,48 @@
-// Importa el archivo de estilos CSS.
 import './style.css';
 
-// Importa el módulo 'Register' desde el archivo "./pages/Register".
+// Importar los módulos necesarios:
 import Register from './pages/Register';
-
-// Importa el módulo 'Login' desde el archivo "./pages/Login".
 import Login from './pages/Login';
-
 import Logout from './pages/Logout';
-// Importa el módulo 'Eventos' desde el archivo "./pages/Eventos".
 import Eventos from './pages/Eventos';
-
-//EVENTOS CONFIRMADOS:
 import EventosConfirmados from './pages/EventosConfirmados';
 
-
-
+// Crear los eventos de clic a los enlaces de la página y asegurarnos que cargue la página completa:
 document.addEventListener('DOMContentLoaded', function () {
   Eventos();
-  
 
-  // Añade un controlador de eventos para el clic en el elemento con id "loginlink", que llama a la función Login().
+  document.getElementById('home').addEventListener('click', () => {
+    Eventos();
+  });
+
+  // Link de inicio de sesión:
   document.querySelector('#loginlink').addEventListener('click', (event) => {
     event.preventDefault();
     Login();
   });
 
-  // Añade un controlador de eventos para el clic en el elemento con id "registerlink", que llama a la función Register().
+  // Link de registro:
   document.querySelector('#registerlink').addEventListener('click', (event) => {
     event.preventDefault();
     Register();
-    
   });
 
+  // Link de cierre de sesión:
   document.querySelector('#logoutlink').addEventListener('click', (event) => {
     event.preventDefault();
     Logout();
   });
 
-  // Añade un controlador de eventos para el clic en el elemento con id "bookslink", que llama a la función Books().
+  // Link de eventos:
   document
     .querySelector('#eventoslink')
     .addEventListener('click', () => Eventos());
 
-  document.querySelector('#misEventoslink').addEventListener('click', (event) => {
-    event.preventDefault();
-    EventosConfirmados();
-  });
+  // Link de eventos confirmados:
+  document
+    .querySelector('#misEventoslink')
+    .addEventListener('click', (event) => {
+      event.preventDefault();
+      EventosConfirmados();
+    });
 });

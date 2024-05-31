@@ -1,12 +1,13 @@
 import { getEventos } from './eventosModule';
-//! Define una arrow function llamada `template` que devuelve un template string:
+
+//! Definir una function llamada 'template' para los elementos del DOM:
 export const template = () => `
 <section id="asistentes">
     <ul id="asistentes-container"></ul>
 </section>
 `;
 
-//! Define una función asíncrona llamada `getBooks` para obtener y mostrar libros desde una API:
+//! Crear una función llamada 'showAsistentesByEvento' para obtener y mostrar los asistentes de un evento específico:
 export const showAsistentesByEvento = async (eventoId) => {
   try {
     const user = JSON.parse(localStorage.getItem('user'));
@@ -15,34 +16,30 @@ export const showAsistentesByEvento = async (eventoId) => {
       return;
     }
 
-    // Verifica si el ID del evento está definido
-    if (!eventoId) {
-      console.error('ID del evento no proporcionado');
-      return;
-    }
     // Realiza una solicitud a la API para obtener datos de asistentes
     const response = await fetch(
-      `http://localhost:3000/api/v1/eventos/${eventoId}/asistentes`
+      `http://localhost:3000/api/v1/asistentes/${eventoId}/asistentes`
     );
 
-    // Verifica si la solicitud fue exitosa
     if (!response.ok) {
       throw new Error('Error al obtener los asistentes');
     }
 
-    const asistentes = await response.json(); // Convierte los datos a formato JSON
+    const asistentes = await response.json();
 
     const asistentesContainer = document.querySelector('#asistentes-container');
     asistentesContainer.innerHTML = '';
 
+    // Si no hay asistentes para el evento, mostrar un mensaje:
     if (asistentes.length === 0) {
       const mensaje = document.createElement('p');
       mensaje.textContent = 'Todavía no hay asistentes para este evento.';
       asistentesContainer.appendChild(mensaje);
     } else {
-      asistentes.sort((a, b) => a.nombre.localeCompare(b.nombre)); //Ordena alfabéticamente.
+      asistentes.sort((a, b) => a.nombre.localeCompare(b.nombre)); //Ordenar.
     }
-    // Itera sobre cada asistente y crea elementos de lista para mostrar la información:
+
+    // Iterar sobre cada asistente y crear elementos de lista para mostrar la información:
     for (const asistente of asistentes) {
       const li = document.createElement('li');
       li.innerHTML = `
@@ -51,17 +48,18 @@ export const showAsistentesByEvento = async (eventoId) => {
       asistentesContainer.appendChild(li);
     }
 
-    // Oculta la sección de eventos y muestra la sección de asistentes
+    // Ocultar y mostrar secciones y elementos:
     document.getElementById('crear-evento-btn').style.display = 'none';
     document.querySelector('.eventos-title').style.display = 'none';
     document.getElementById('eventos-container').style.display = 'none';
     document.getElementById('asistentes-section').style.display = 'block';
 
-    // Actualizar el botón de "Volver"
+    // Actualizar el botón de "Volver a eventos"
     document.getElementById('volver').addEventListener('click', async () => {
       document.getElementById('crear-evento-btn').style.display = 'block';
       document.querySelector('.eventos-title').style.display = 'block';
-      // Redirigir al usuario a la lista de eventos
+
+      // Redirigir al usuario a la lista de eventos:
       await getEventos();
     });
   } catch (error) {
@@ -69,42 +67,13 @@ export const showAsistentesByEvento = async (eventoId) => {
   }
 };
 
-//! Define una función para obtener y mostrar asistentes
-export const getAllAsistentes = async () => {
-  try {
-    // Realiza una solicitud a la API para obtener los asistentes
-    const response = await fetch('http://localhost:3000/api/v1/asistentes');
+//! Agregar un evento clic al elemento 'evento-item':
+const verAsistentesBtn = document.querySelectorAll('.asistente-nombre');
+verAsistentesBtn.forEach((btn) => {
+  btn.addEventListener('click', async () => {
+    const eventoId = btn.dataset.eventoId;
+    await getAsistenteEspecifico(eventoId);
 
-    if (!response.ok) {
-      throw new Error('Error al obtener los asistentes');
-    }
-
-    const asistentes = await response.json();
-    const asistentesContainer = document.querySelector('#asistentes-container');
-    asistentesContainer.innerHTML = '';
-
-    // Ordenar los asistentes alfabéticamente por nombre
-    asistentes.sort((a, b) => a.nombre.localeCompare(b.nombre));
-
-    for (const asistente of asistentes) {
-      const li = document.createElement('li');
-      li.textContent = `${asistente.nombre} (${asistente.email})`;
-      asistentesContainer.appendChild(li);
-    }
-
-    document.getElementById('eventos-container').style.display = 'none';
-    document.getElementById('asistentes-section').style.display = 'block';
-    document.getElementById('welcome-message').style.display = 'none';
-  } catch (error) {
-    console.error('Error al obtener los asistentes:', error);
-  }
-};
-
-//! Define una función llamada `Asistentes` que actualiza el contenido de la sección de libros en el DOM:
-export const Asistentes = (eventoId) => {
-  // Selecciona el elemento 'main' en el DOM y asigna el HTML generado por la función `template`
-  document.querySelector('main').innerHTML = template();
-
-  // Llama a la función `getBooks` para cargar dinámicamente los libros en la página
-  showAsistentesByEvento(eventoId);
-};
+    document.getElementById('crear-evento-btn').style.display = 'none';
+  });
+});

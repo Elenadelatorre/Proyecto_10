@@ -1,12 +1,9 @@
-//! Importa la función `Eventos` desde el módulo "./Eventos" para poder mostrarla:
-// una vez hayamos iniciado sesión
 import Eventos from './Eventos';
 import Register, { updateLogoutLinkVisibility } from './Register';
 
-//! Define una función arrow llamada `template` que devuelve un template string:
+//! Crear una función llamada 'template' para crear los elementos del DOM:
 const template = () => {
   if (localStorage.getItem('user')) {
-    // Obtiene el usuario del localStorage
     const user = JSON.parse(localStorage.getItem('user'));
 
     // Si hay un usuario, muestra un mensaje de bienvenida con su nombre
@@ -28,15 +25,15 @@ const template = () => {
             </section>`;
   }
 };
-//! Define una función asíncrona llamada `loginSubmit` para procesar el envío del formulario de inicio de sesión:
+//! Crear una función llamada 'loginSubmit' para procesar el envío del formulario de inicio de sesión:
 const loginSubmit = async (event) => {
   event.preventDefault();
 
-  const email = document.querySelector('#email').value; // Obtiene los valores del email
-  const contraseña = document.querySelector('#password').value; // Obtiene los valores de la contraseña de usuario.
+  const email = document.querySelector('#email').value;
+  const contraseña = document.querySelector('#password').value;
 
   try {
-    // Realiza una solicitud a la API para iniciar sesión
+    // Realiza una solicitud a la API para iniciar sesión:
     const response = await fetch('http://localhost:3000/api/v1/users/login', {
       headers: {
         'Content-Type': 'application/json'
@@ -47,7 +44,6 @@ const loginSubmit = async (event) => {
         contraseña: contraseña
       })
     });
-    console.log('Respuesta recibida:', response);
 
     // Verifica si la respuesta es exitosa
     if (!response.ok) {
@@ -55,17 +51,15 @@ const loginSubmit = async (event) => {
       throw new Error(errorUser.message || 'Fallo en el inicio de sesión');
     }
 
-    // Convierte la respuesta a formato JSON
     const responseData = await response.json();
-    const user = responseData.user;
 
     // Almacena la información del usuario en el localStorage
+    const user = responseData.user;
     localStorage.setItem('user', JSON.stringify(user));
 
-    // Muestra una alerta de bienvenida con el nombre de usuario
     alert(`¡Excelente! Has iniciado sesión con éxito ${user.nombre}.`);
 
-    // Llama a la función `Books` para actualizar la sección de libros en la página
+    // Llamar a la función 'Eventos' para actualizar la sección de eventos en la página:
     Eventos();
   } catch (error) {
     console.log('Error durante el login:', error);
@@ -73,19 +67,24 @@ const loginSubmit = async (event) => {
   }
 };
 
-//! Define una función llamada `Login` que actualiza el contenido de la sección de inicio de sesión en el DOM
+//! Crear una función llamada 'Login' para actualizar los elementos de la sección de inicio de sesión en el DOM:
 const Login = () => {
+  // Ocultar el enlace de cierre de sesión:
   updateLogoutLinkVisibility(false);
+
+  // Ocultar el enlace de inicio de sesión, ya que es lo que vas a hacer:
   document.getElementById('loginlink').style.display = 'none';
-  // Selecciona el elemento 'main' en el DOM y asigna el HTML generado por la función `template`
+
   document.querySelector('main').innerHTML = template();
 
+  // Si no hay un usuario:
   if (!localStorage.getItem('user')) {
     document.getElementById('misEventoslink').style.display = 'none';
-    // Agrega un event listener al botón de inicio de sesión para procesar el evento de clic
+
+    // Agregar un event listener al botón de inicio de sesión para procesar el evento de clic:
     document
       .querySelector('#login-form')
-      .addEventListener('submit', loginSubmit); // Llama a la función `loginSubmit` para procesar el envío del formulario
+      .addEventListener('submit', loginSubmit);
   }
   document.querySelector('#register-link').addEventListener('click', () => {
     // Llama a la función `Login` para redirigir al usuario a la sección de inicio de sesión
@@ -93,5 +92,4 @@ const Login = () => {
   });
 };
 
-//! Exporta la función `Login` como el valor predeterminado del módulo
 export default Login;
