@@ -53,6 +53,15 @@ const loginSubmit = async (event) => {
 
     const responseData = await response.json();
 
+    // Almacena el token en el localStorage
+    const token = responseData.token;
+    if (token) {
+      localStorage.setItem('token', token);
+      console.log('Token stored in localStorage:', token); // Debug log
+    } else {
+      console.error('Token is undefined or null'); // Error log
+    }
+
     // Almacena la información del usuario en el localStorage
     const user = responseData.user;
     localStorage.setItem('user', JSON.stringify(user));

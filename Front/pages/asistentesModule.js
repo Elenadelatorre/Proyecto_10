@@ -43,8 +43,8 @@ export const showAsistentesByEvento = async (eventoId) => {
     for (const asistente of asistentes) {
       const li = document.createElement('li');
       li.innerHTML = `
-      <h3 class="asistente-nombre">Nombre:${asistente.nombre}</h3>
-      <h4 class="asistente-email">Email:${asistente.email}</h4>`;
+      <h3 class="asistente-nombre">Nombre:  ${asistente.nombre}</h3>
+      <h4 class="asistente-email">Email:  ${asistente.email}</h4>`;
       asistentesContainer.appendChild(li);
     }
 

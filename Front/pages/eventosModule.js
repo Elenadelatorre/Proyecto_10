@@ -4,7 +4,7 @@ import eliminarEvento from './eliminarEventos.js';
 //! Crear una función llamada 'template' para mostrar los elementos en el DOM:
 export const template = () => `
   <section id="eventos">
-    <h2 class="eventos-title">Eventos</h2>
+    <h2 class="eventos-title">Próximos eventos</h2>
     <button id="crear-evento-btn">Crear nuevo evento ➕ </button>
     <ul id="eventos-container"></ul>
     <div id="asistentes-section" style="display: none;">
@@ -85,7 +85,9 @@ export const getEventos = async () => {
       eventosContainer.appendChild(li);
 
       // Ocultar la descripción del evento:
-      document.querySelector('.evento-info h5').style.display = 'none';
+      document.querySelectorAll('.evento-info h5').forEach(h5 => {
+        h5.style.display = 'none';
+      });
 
       // Agregar un evento clic al botón de 'Asistir' o 'Cancelar asistencia':
       const asistenciaBtn = li.querySelector('.asistencia-btn');
@@ -324,20 +326,20 @@ export const handleCrearEvento = async () => {
         })
       }
     );
-
-    
+    console.log(postResponse);
     if (!postResponse.ok) {
       const errorData = await postResponse.json();
-      throw new Error(errorData.message || 'Error al marcar asistencia');
+      throw new Error(errorData.message || 'Error al crear el evento');
     }
 
     const responseData = await postResponse.json();
-    
+    console.log(responseData);
+
     alert(responseData.message || 'Evento creado correctamente');
 
     // Ocultar el formulario de creación de eventos:
     document.getElementById('crear-evento-modal').style.display = 'none';
-    
+
     await getEventos();
   } catch (error) {
     console.log(error);
