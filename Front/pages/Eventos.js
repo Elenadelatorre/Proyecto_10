@@ -14,26 +14,29 @@ const Eventos = () => {
     logoutLink.style.display = 'none';
     misEventos.style.display = 'none';
     loginlink.style.display = 'block';
+    //
   } else {
     //Sino:
     logoutLink.style.display = 'block';
     misEventos.style.display = 'block';
     loginlink.style.display = 'none';
-    registerlink.style.display = 'none';
+    
   }
 
   // Definir  el HTML generado por la función 'template':
   document.querySelector('main').innerHTML = template();
+
+  //Mostrar o no el botón de "Crear nuevo evento" dependiendo si ha iniciado sesión o no:
+  const crearEventoBtn = document.getElementById('crear-evento-btn');
+  if (crearEventoBtn) {
+    crearEventoBtn.style.display = userLoggedIn ? 'block' : 'none';
+  }
 
   // Llama a la función 'getEventos' para cargar dinámicamente los eventos en la página:
   getEventos();
 
   // Agregar el evento clic al botón de 'Crear nuevo evento' para mostrar el formulario:
   document.getElementById('crear-evento-btn').addEventListener('click', () => {
-    if (!userLoggedIn) {
-      alert('Debe iniciar sesión para crear un evento.');
-      return;
-    }
     document.getElementById('crear-evento-modal').style.display = 'block';
     document.getElementById('asistentes-section').style.display = 'none';
   });

@@ -1,7 +1,6 @@
 import './style.css';
 
 // Importar los módulos necesarios:
-import Register from './pages/Register';
 import Login from './pages/Login';
 import Logout from './pages/Logout';
 import Eventos from './pages/Eventos';
@@ -19,12 +18,6 @@ document.addEventListener('DOMContentLoaded', function () {
   document.querySelector('#loginlink').addEventListener('click', (event) => {
     event.preventDefault();
     Login();
-  });
-
-  // Link de registro:
-  document.querySelector('#registerlink').addEventListener('click', (event) => {
-    event.preventDefault();
-    Register();
   });
 
   // Link de cierre de sesión:

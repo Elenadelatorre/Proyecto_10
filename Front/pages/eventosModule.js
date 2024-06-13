@@ -1,11 +1,13 @@
 import { showAsistentesByEvento } from './asistentesModule.js';
 import eliminarEvento from './eliminarEventos.js';
 
+const userLoggedIn = localStorage.getItem('user');
+
 //! Crear una función llamada 'template' para mostrar los elementos en el DOM:
 export const template = () => `
   <section id="eventos">
     <h2 class="eventos-title">Próximos eventos</h2>
-    <button id="crear-evento-btn">Crear nuevo evento ➕ </button>
+    <button id="crear-evento-btn" >Crear nuevo evento ➕ </button>
     <ul id="eventos-container"></ul>
     <div id="asistentes-section" style="display: none;">
       <h2 class="asistentes">Asistentes</h2>
@@ -27,6 +29,17 @@ export const template = () => `
         <input type="file" id="img" name="img" accept="image/*"><br>
         <button id="crear-evento" >Crear Evento</button>
         <button type="button" id="cancelar-crear-evento">Cancelar</button>
+      </form>
+    </div>
+    <div id="asistencia-modal" class="modal" style="display: none;">
+      <h2>Asistencia al Evento</h2>
+      <form id="asistencia-form">
+        <label for="nombre">Nombre:</label>
+        <input type="text" id="nombre" name="nombre" required><br>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required><br>
+        <button type="submit">Confirmar Asistencia</button>
+        <button type="button" id="cancelar-asistencia">Cancelar</button>
       </form>
     </div>
   </section>
@@ -59,6 +72,39 @@ export const getEventos = async () => {
       li.className = 'evento-item';
       li.dataset.eventoId = evento._id;
 
+      //Abrir un modal si el usuario no está registrado:
+      const openAsistenciaModal = (eventoId) => {
+        const asistenciaModal = document.getElementById('asistencia-modal');
+        asistenciaModal.style.display = 'block';
+        const asistenciaForm = document.getElementById('asistencia-form');
+
+        asistenciaForm.onsubmit = async (e) => {
+          e.preventDefault();
+          // Verificar si el usuario está autenticado
+          const user = JSON.parse(localStorage.getItem('user'));
+          let userOrContact = {};
+          if (user) {
+            //await handleAddToAsistencias(eventoId, user);
+            userOrContact = { user };
+          } else {
+            const nombre = document.getElementById('nombre').value;
+            const email = document.getElementById('email').value;
+            userOrContact = { nombre, email };
+          }
+
+          await handleAddToAsistencias(eventoId, userOrContact);
+          asistenciaModal.style.display = 'none';
+        };
+        document.getElementById('cancelar-asistencia').onclick = () => {
+          asistenciaModal.style.display = 'none';
+        };
+      };
+
+      const closeAsistenciaModal = () => {
+        const asistenciaModal = document.getElementById('asistencia-modal');
+        asistenciaModal.style.display = 'none';
+      };
+
       // Verifica si el usuario va a asistir o no al evento:
       const asistiendo = asistencias[evento._id] ? true : false;
 
@@ -75,9 +121,11 @@ export const getEventos = async () => {
       }" data-evento-id="${evento._id}">
           ${asistiendo ? 'Cancelar asistencia 👎🏻' : 'Asistir 👍🏻'}
         </button>
-      <button class="ver-asistentes-btn" data-evento-id="${
-        evento._id
-      }">Ver Asistentes</button>
+        ${
+          userLoggedIn
+            ? `<button class="ver-asistentes-btn" data-evento-id="${evento._id}">Ver Asistentes</button>`
+            : ''
+        }
       <button class="eliminar-evento-btn" data-evento-id="${
         evento._id
       }" style="display: none;">Eliminar Evento</button>
@@ -85,7 +133,7 @@ export const getEventos = async () => {
       eventosContainer.appendChild(li);
 
       // Ocultar la descripción del evento:
-      document.querySelectorAll('.evento-info h5').forEach(h5 => {
+      document.querySelectorAll('.evento-info h5').forEach((h5) => {
         h5.style.display = 'none';
       });
 
@@ -94,20 +142,26 @@ export const getEventos = async () => {
       asistenciaBtn.currentHandler = async (e) => {
         e.stopPropagation();
         const user = JSON.parse(localStorage.getItem('user'));
-        if (asistiendo) {
-          await handleRemoveFromAsistencias(evento._id, asistenciaBtn);
+        if (user) {
+          if (asistiendo) {
+            await handleRemoveFromAsistencias(evento._id, asistenciaBtn);
+          } else {
+            await handleAddToAsistencias(evento._id, user);
+          }
         } else {
-          await handleAddToAsistencias(evento._id, asistenciaBtn, user._id);
+          openAsistenciaModal(evento._id);
         }
       };
       asistenciaBtn.addEventListener('click', asistenciaBtn.currentHandler);
 
       // Agregar un evento clic al botón de 'Ver asistentes':
       const verAsistentesBtn = li.querySelector('.ver-asistentes-btn');
-      verAsistentesBtn.addEventListener('click', async (e) => {
-        e.stopPropagation();
-        await showAsistentesByEvento(evento._id);
-      });
+      if (verAsistentesBtn) {
+        verAsistentesBtn.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          await showAsistentesByEvento(evento._id);
+        });
+      }
 
       // Agregar un evento clic al botón de 'Eliminar evento':
       const eliminarEventoBtn = li.querySelector('.eliminar-evento-btn');
@@ -130,15 +184,9 @@ export const getEventos = async () => {
 
 //! ASISTENCIA:
 //! Crear una función para manejar la asistencia a los eventos:
-export const handleAddToAsistencias = async (eventoId, button, asistenteId) => {
+export const handleAddToAsistencias = async (eventoId, userOrContact) => {
   try {
-    const user = JSON.parse(localStorage.getItem('user'));
-
-    if (!user) {
-      alert('Debe iniciar sesión para marcar asistencia a un evento.');
-      return;
-    }
-
+    
     // Realizar la solicitud a la API para crear un asistente y así "asistir" al evento:
     const postResponse = await fetch(
       `http://localhost:3000/api/v1/eventos/${eventoId}/asistencias`,
@@ -148,8 +196,8 @@ export const handleAddToAsistencias = async (eventoId, button, asistenteId) => {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          nombre: user.nombre,
-          email: user.email
+          nombre: userOrContact.nombre || userOrContact.user.nombre,
+          email: userOrContact.email || userOrContact.user.email
         })
       }
     );
@@ -161,30 +209,46 @@ export const handleAddToAsistencias = async (eventoId, button, asistenteId) => {
     }
 
     const responseData = await postResponse.json();
+    console.log('Respuesta de la API:', responseData);
     alert(responseData.message || 'Asistencia confirmada');
 
     // Actualizar el almacenamiento local:
-    const asistencias = JSON.parse(localStorage.getItem('asistencias')) || {};
-    asistencias[eventoId] = true;
-    localStorage.setItem('asistencias', JSON.stringify(asistencias));
+    if (userOrContact.user) {
+      const asistencias = JSON.parse(localStorage.getItem('asistencias')) || {};
+      asistencias[eventoId] = true;
+      localStorage.setItem('asistencias', JSON.stringify(asistencias));
+    }
 
-    // Actualizar el botón de 'Asistir':
-    button.textContent = 'Cancelar asistencia 👎🏻';
-    button.classList.add('cancelar-asistencia');
+    // Actualizar botón de asistencia si es necesario
+    const button = document.querySelector(
+      `.asistencia-btn[data-evento-id="${eventoId}"]`
+    );
+    if (button) {
+      // Actualizar el botón de 'Asistir':
+      button.textContent = 'Cancelar asistencia 👎🏻';
+      button.classList.add('cancelar-asistencia');
 
-    // Eliminar el eventListener de eventos anterior y añade uno nuevo para evitar la repetición:
-    button.removeEventListener('click', button.currentHandler);
-    button.currentHandler = async (e) => {
-      e.stopPropagation();
-      await handleRemoveFromAsistencias(eventoId, button);
-    };
-    button.addEventListener('click', button.currentHandler);
+      // Eliminar el eventListener de eventos anterior y añade uno nuevo para evitar la repetición:
+      button.removeEventListener('click', button.currentHandler);
+      button.currentHandler = async (e) => {
+        e.stopPropagation();
+        await handleRemoveFromAsistencias(eventoId, button);
+      };
+      button.addEventListener('click', button.currentHandler);
+    }
   } catch (error) {
     console.error('Error en la llamada fetch:', error);
     alert('Hubo un error al marcar la asistencia');
   }
 };
-
+// Código para inicializar y manejar el modal de asistencia
+document.querySelectorAll('.asistencia-btn').forEach((button) => {
+  button.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const eventoId = button.getAttribute('data-evento-id');
+    openAsistenciaModal(eventoId);
+  });
+});
 //! Crear una función para manejar la cancelación de la asistencia:
 export const handleRemoveFromAsistencias = async (eventoId, button) => {
   try {

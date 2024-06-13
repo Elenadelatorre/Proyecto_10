@@ -1,4 +1,5 @@
 import Login from './Login';
+import Eventos from './Eventos';
 
 //! Crear una función llamada 'template' para actualizar los elementos del DOM para esta sección:
 const template = () => `
@@ -83,16 +84,32 @@ const registerSubmit = async (event) => {
       const errorData = await response.json();
       throw new Error(errorData.message || 'Error en el registro');
     }
-
-    alert(
-      `Genial ${nombre}, te has registrado con éxito. Por favor, inicia sesión con tus credenciales.`
+    // Iniciar sesión automáticamente después del registro exitoso:
+    const loginResponse = await fetch(
+      'http://localhost:3000/api/v1/users/login',
+      {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        method: 'POST',
+        body: JSON.stringify({
+          email,
+          contraseña: contraseña
+        })
+      }
     );
 
-    // Llama a la función 'Login' para redirigir al usuario a la sección de inicio de sesión cuando se haya registrado:
-    Login();
+    if (!loginResponse.ok) {
+      const errorData = await loginResponse.json();
+      throw new Error(errorData.message || 'Error en el inicio de sesión');
+    }
+
+    const userData = await loginResponse.json();
+    localStorage.setItem('user', JSON.stringify(userData));
   } catch (error) {
     alert(`Error: ${error.message}`);
   }
+  Eventos();
 };
 
 //! Crear una función llamada 'Register' que actualiza el contenido de la sección de registro en el DOM:
