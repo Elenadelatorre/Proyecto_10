@@ -66,13 +66,10 @@ const loginSubmit = async (event) => {
     const user = responseData.user;
     localStorage.setItem('user', JSON.stringify(user));
 
-    alert(`¡Excelente! Has iniciado sesión con éxito ${user.nombre}.`);
-
     // Llamar a la función 'Eventos' para actualizar la sección de eventos en la página:
     Eventos();
   } catch (error) {
     console.log('Error durante el login:', error);
-    alert(`Inicio de sesión fallido: ${error.message}`);
   }
 };
 

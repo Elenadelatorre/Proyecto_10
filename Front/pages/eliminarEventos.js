@@ -2,7 +2,7 @@
 const eliminarEvento = async (eventoId) => {
   const currentUser = JSON.parse(localStorage.getItem('user'));
   if (!currentUser || currentUser.rol !== 'admin') {
-    alert('No tienes permiso para eliminar eventos.');
+    console.log("Error", error)
     return;
   }
 
@@ -22,11 +22,11 @@ const eliminarEvento = async (eventoId) => {
     }
 
     const responseData = await response.json();
-    alert(responseData.message || 'Evento eliminado correctamente');
+ 
     await getEventos();
   } catch (error) {
     console.error('Error al eliminar el evento:', error);
-    alert('Hubo un error al eliminar el evento');
+  
   }
 };
 

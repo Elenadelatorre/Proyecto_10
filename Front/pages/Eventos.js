@@ -7,7 +7,7 @@ const Eventos = () => {
   const logoutLink = document.getElementById('logoutlink');
   const misEventos = document.getElementById('misEventoslink');
   const loginlink = document.getElementById('loginlink');
-  const registerlink = document.getElementById('registerlink');
+  
 
   //Si el usuario NO ha iniciado sesión y el link de logout existe:
   if (!userLoggedIn && logoutLink) {

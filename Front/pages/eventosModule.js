@@ -186,7 +186,6 @@ export const getEventos = async () => {
 //! Crear una función para manejar la asistencia a los eventos:
 export const handleAddToAsistencias = async (eventoId, userOrContact) => {
   try {
-    
     // Realizar la solicitud a la API para crear un asistente y así "asistir" al evento:
     const postResponse = await fetch(
       `http://localhost:3000/api/v1/eventos/${eventoId}/asistencias`,
@@ -210,7 +209,6 @@ export const handleAddToAsistencias = async (eventoId, userOrContact) => {
 
     const responseData = await postResponse.json();
     console.log('Respuesta de la API:', responseData);
-    alert(responseData.message || 'Asistencia confirmada');
 
     // Actualizar el almacenamiento local:
     if (userOrContact.user) {
@@ -238,7 +236,6 @@ export const handleAddToAsistencias = async (eventoId, userOrContact) => {
     }
   } catch (error) {
     console.error('Error en la llamada fetch:', error);
-    alert('Hubo un error al marcar la asistencia');
   }
 };
 // Código para inicializar y manejar el modal de asistencia
@@ -253,11 +250,6 @@ document.querySelectorAll('.asistencia-btn').forEach((button) => {
 export const handleRemoveFromAsistencias = async (eventoId, button) => {
   try {
     const user = JSON.parse(localStorage.getItem('user'));
-
-    if (!user) {
-      alert('Debe iniciar sesión para cancelar su asistencia a un evento.');
-      return;
-    }
 
     // Realizar la solicitud a la API para eliminar un asistente y así 'cancelar' la asistencia:
     const deleteResponse = await fetch(
@@ -284,8 +276,6 @@ export const handleRemoveFromAsistencias = async (eventoId, button) => {
     delete asistencias[eventoId];
     localStorage.setItem('asistencias', JSON.stringify(asistencias));
 
-    alert(responseData.message); // Mostrar mensaje de éxito
-
     // Actualizar el botón de 'Asistir':
     button.textContent = 'Asistir 👍🏻';
     button.classList.remove('cancelar-asistencia');
@@ -299,7 +289,6 @@ export const handleRemoveFromAsistencias = async (eventoId, button) => {
     button.addEventListener('click', button.currentHandler);
   } catch (error) {
     console.error('Error al cancelar la asistencia:', error);
-    alert('Hubo un error al cancelar la asistencia');
   }
 };
 
@@ -399,8 +388,6 @@ export const handleCrearEvento = async () => {
     const responseData = await postResponse.json();
     console.log(responseData);
 
-    alert(responseData.message || 'Evento creado correctamente');
-
     // Ocultar el formulario de creación de eventos:
     document.getElementById('crear-evento-modal').style.display = 'none';
 
@@ -408,6 +395,5 @@ export const handleCrearEvento = async () => {
   } catch (error) {
     console.log(error);
     // Mostrar mensaje de error al usuario
-    alert('Error al crear el evento: ' + error.message);
   }
 };

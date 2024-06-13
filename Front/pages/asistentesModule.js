@@ -11,10 +11,6 @@ export const template = () => `
 export const showAsistentesByEvento = async (eventoId) => {
   try {
     const user = JSON.parse(localStorage.getItem('user'));
-    if (!user) {
-      alert('Debe iniciar sesión para marcar asistencia a un evento.');
-      return;
-    }
 
     // Realiza una solicitud a la API para obtener datos de asistentes
     const response = await fetch(

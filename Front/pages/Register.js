@@ -57,9 +57,7 @@ const registerSubmit = async (event) => {
 
   // Verificar si alguno de los campos está vacío o si la contraseña no tiene al menos 8 caracteres:
   if (!nombre || !email || !contraseña || contraseña.length < 8) {
-    alert(
-      'Por favor asegúrate de que la contraseña tenga al menos 8 caracteres.'
-    );
+    console.error(error)
     return;
   }
 
@@ -107,7 +105,8 @@ const registerSubmit = async (event) => {
     const userData = await loginResponse.json();
     localStorage.setItem('user', JSON.stringify(userData));
   } catch (error) {
-    alert(`Error: ${error.message}`);
+    console.log('Error durante el registro:', error);
+  
   }
   Eventos();
 };

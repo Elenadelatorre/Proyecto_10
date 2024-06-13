@@ -1,5 +1,5 @@
 import { showAsistentesByEvento } from './asistentesModule.js';
-import { getEventoEspecifico } from './eventosModule.js';
+//import { getEventoEspecifico } from './eventosModule.js';
 
 //! Crear una función llamada 'EventosConfirmados' para mostrar solo los eventos a los que el usuario va a asistir:
 export const EventosConfirmados = async () => {
