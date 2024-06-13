@@ -70,7 +70,8 @@ const postNuevoEvento = async (req, res, next) => {
 const postAsistente = async (req, res, next) => {
   try {
     const { eventoId } = req.params;
-    let { nombre, email } = req.body;
+    console.log(req.body);
+    const { nombre, email } = req.body;
 
     console.log('Datos recibidos:', { eventoId, nombre, email });
 

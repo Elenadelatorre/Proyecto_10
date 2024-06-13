@@ -1,7 +1,8 @@
 const {
   getAllAsistentes,
   getAsistenteById,
-  getAsistentesByEvento
+  getAsistentesByEvento,
+  getAsistentesByEventoId
 } = require('../controllers/asistentes');
 
 const asistentesRouter = require('express').Router();

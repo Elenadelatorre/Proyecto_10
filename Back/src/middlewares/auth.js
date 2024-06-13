@@ -21,13 +21,11 @@ const isAuth = async (req, res, next) => {
 
 //isAdmin:
 const isAdmin = async (req, res, next) => {
-  await authenticateUser(req, res, async () => {
-    if (req.user.rol === 'admin') {
-      return next();
-    } else {
-      return res.status(400).json('No eres Administrador');
-    }
-  });
+  if (req.user.rol === 'admin') {
+    return next();
+  } else {
+    return res.status(400).json('No eres Administrador');
+  }
 };
 
 //Verificar Admin:

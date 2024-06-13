@@ -23,7 +23,7 @@ eventosRouter.get('/', getEventos);
 eventosRouter.post('/:eventoId/asistencias', postAsistente);
 eventosRouter.post('/nuevoEvento', upload.single('img'), postNuevoEvento);
 eventosRouter.put('/:id', upload.single('img'), putEvento);
-eventosRouter.delete('/:eventoId/asistencias', [isAdmin], deleteAsistente);
+eventosRouter.delete('/:eventoId/asistencias', deleteAsistente);
 eventosRouter.delete('/:eventoId', [isAdmin], deleteEvento);
 
 module.exports = eventosRouter;
