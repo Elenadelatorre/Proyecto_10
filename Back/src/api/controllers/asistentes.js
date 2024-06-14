@@ -29,13 +29,41 @@ const getAsistenteById = async (req, res, next) => {
 // GET asistentes por evento:
 const getAsistentesByEvento = async (req, res, next) => {
   try {
-    const { eventoId } = req.params;
+    const { eventoId, email } = req.params;
+    const asistente = await Asistente.findOne({
+      email,
+      eventoConfirmado: eventoId
+    });
+    if (!asistente) {
+      return res.status(200).json({ asistente: false });
+    }
 
-    const asistentes = await Asistente.find({ eventoConfirmado: eventoId });
-    return res.status(200).json(asistentes);
+    res.status(200).json({ asistente: true });
   } catch (error) {
-    console.error('Error al obtener los asistentes:', error);
-    res.status(404).json({ message: 'Error al obtener los asistentes', error });
+    console.error(error);
+    res
+      .status(500)
+      .json({ message: 'Error al verificar la asistencia del usuario' });
+  }
+};
+
+// GET asistentes por evento:
+const getAsistentes = async (req, res, next) => {
+  try {
+    const eventoId = req.params.eventoId;
+    const evento = await Evento.findById(eventoId).populate('asistentes');
+
+    if (!evento) {
+      return res.status(404).json({ message: 'Evento no encontrado' });
+    }
+
+    const asistentes = evento.asistentes;
+    res.status(200).json(asistentes);
+  } catch (error) {
+    console.error('Error al obtener los asistentes del evento:', error);
+    res
+      .status(500)
+      .json({ message: 'Error al obtener los asistentes del evento' });
   }
 };
 
@@ -85,6 +113,7 @@ module.exports = {
   getAllAsistentes,
   getAsistenteById,
   getAsistentesByEvento,
+  getAsistentes,
   updateAsistente,
   deleteAsistente
 };
