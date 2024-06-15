@@ -1,7 +1,7 @@
 import { showAsistentesByEvento } from './asistentesModule.js';
 import eliminarEvento from './eliminarEventos.js';
 
-const userLoggedIn = localStorage.getItem('user');
+
 //! Función para mostrar los elementos en el DOM:
 export const template = () => `
   <section id="eventos">
@@ -61,7 +61,7 @@ export const getEventos = async () => {
 
     const userLoggedIn = JSON.parse(localStorage.getItem('user'));
 
-    eventos.forEach(async (evento) => {
+    for (const evento of eventos) {
       // Consultar el estado de asistencia desde la API cada vez que se itera sobre un evento
       let usuarioAsistente = false;
       if (userLoggedIn) {
@@ -87,11 +87,19 @@ export const getEventos = async () => {
           <h4>${evento.ubicacion}</h4>
           <h5>${evento.descripcion}</h5>
         </div>
-        <button class="asistencia-btn ${usuarioAsistente ? 'cancelar-asistencia' : ''}" data-evento-id="${evento._id}">
+        <button class="asistencia-btn ${
+          usuarioAsistente ? 'cancelar-asistencia' : ''
+        }" data-evento-id="${evento._id}">
           ${usuarioAsistente ? 'Cancelar asistencia 👎🏻' : 'Asistir 👍🏻'}
         </button>
-        ${userLoggedIn ? `<button class="ver-asistentes-btn" data-evento-id="${evento._id}">Ver Asistentes</button>` : ''}
-        <button class="eliminar-evento-btn" data-evento-id="${evento._id}" style="display: none;">Eliminar Evento</button>
+        ${
+          userLoggedIn
+            ? `<button class="ver-asistentes-btn" data-evento-id="${evento._id}">Ver Asistentes</button>`
+            : ''
+        }
+        <button class="eliminar-evento-btn" data-evento-id="${
+          evento._id
+        }" style="display: none;">Eliminar Evento</button>
       `;
       eventosContainer.appendChild(li);
 
@@ -133,7 +141,7 @@ export const getEventos = async () => {
         await getEventoEspecifico(evento._id);
         document.getElementById('crear-evento-btn').style.display = 'none';
       });
-    });
+    }
   } catch (error) {
     console.error('Error al obtener los eventos:', error);
   }
@@ -232,8 +240,8 @@ export const getEventoEspecifico = async (eventoId) => {
     `;
 
     // Agregar un evento clic al botón de 'volver a eventos':
-    document.getElementById('volver').addEventListener('click', async () => {
-      await getEventos();
+    document.getElementById('volver').addEventListener('click',  () => {
+       getEventos();
       document.getElementById('crear-evento-btn').style.display = 'block';
     });
   } catch (error) {
@@ -307,3 +315,6 @@ export const handleCrearEvento = async () => {
     // Mostrar mensaje de error al usuario
   }
 };
+document.addEventListener('DOMContentLoaded', () => {
+  getEventos();
+});

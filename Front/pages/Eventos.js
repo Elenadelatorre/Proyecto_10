@@ -1,4 +1,5 @@
 import { template, getEventos, handleCrearEvento } from './eventosModule.js';
+  // Llama a la función 'getEventos' para cargar dinámicamente los eventos en la página:
 
 //! Crear una función para actualizar el contenido de la sección de eventos en el DOM:
 const Eventos = () => {
@@ -32,8 +33,7 @@ const Eventos = () => {
     crearEventoBtn.style.display = userLoggedIn ? 'block' : 'none';
   }
 
-  // Llama a la función 'getEventos' para cargar dinámicamente los eventos en la página:
-  getEventos();
+
 
   // Agregar el evento clic al botón de 'Crear nuevo evento' para mostrar el formulario:
   document.getElementById('crear-evento-btn').addEventListener('click', () => {

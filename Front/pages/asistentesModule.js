@@ -10,8 +10,6 @@ export const template = () => `
 //! Crear una función llamada 'showAsistentesByEvento' para obtener y mostrar los asistentes de un evento específico:
 export const showAsistentesByEvento = async (eventoId) => {
   try {
-    const user = JSON.parse(localStorage.getItem('user'));
-
     // Realiza una solicitud a la API para obtener datos de asistentes
     const response = await fetch(
       `http://localhost:3000/api/v1/asistentes/${eventoId}/asistentes`
@@ -54,9 +52,6 @@ export const showAsistentesByEvento = async (eventoId) => {
     document.getElementById('volver').addEventListener('click', async () => {
       document.getElementById('crear-evento-btn').style.display = 'block';
       document.querySelector('.eventos-title').style.display = 'block';
-
-      // Redirigir al usuario a la lista de eventos:
-      await getEventos();
     });
   } catch (error) {
     console.log('Error en obtener los asistentes:', error);
