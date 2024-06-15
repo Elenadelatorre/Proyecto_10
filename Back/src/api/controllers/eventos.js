@@ -75,15 +75,15 @@ const postAsistente = async (req, res, next) => {
 
     console.log('Datos recibidos:', { eventoId, nombre, email });
 
-    // Verificar si nombre y email están proporcionados
+    // Verificar si nombre y email
     if (!nombre || !email) {
-      // Manejar el caso donde no se proporcionan nombre y email
+      
       return res
         .status(400)
         .json({ message: 'Debe proporcionar nombre y email' });
     }
 
-    // Verificar si hay un usuario autenticado
+
 
     let usuarioId = null;
     // Verificar si hay un usuario autenticado

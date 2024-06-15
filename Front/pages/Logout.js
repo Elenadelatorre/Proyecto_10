@@ -6,8 +6,7 @@ const Logout = () => {
   // Elimina la información del usuario del localStorage:
   localStorage.removeItem('user');
 
-  showAlert('Sesión cerrada exitosamente', 'success');
-
+  showAlert('Sesión cerrada exitosamente, vuelva pronto', 'success');
   // Llamar a la función 'Login' para redirigir al usuario a la página de inicio de sesión después de cerrar sesión:
   Login();
 };

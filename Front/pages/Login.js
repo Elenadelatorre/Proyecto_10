@@ -1,3 +1,4 @@
+import { showAlert } from '../alert/alert';
 import Eventos from './Eventos';
 import Register, { updateLogoutLinkVisibility } from './Register';
 
@@ -48,6 +49,7 @@ const loginSubmit = async (event) => {
     // Verifica si la respuesta es exitosa
     if (!response.ok) {
       const errorUser = await response.json();
+      showAlert('Usuario o contraseña incorrectos', 'error');
       throw new Error(errorUser.message || 'Fallo en el inicio de sesión');
     }
 

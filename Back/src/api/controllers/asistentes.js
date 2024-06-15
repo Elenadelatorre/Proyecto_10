@@ -91,8 +91,6 @@ const deleteAsistente = async (req, res, next) => {
   try {
     const { eventoId } = req.params; // Extraer el ID del evento desde los parámetros de la URL
 
-    // Realizar la lógica para buscar y eliminar el asistente asociado al evento
-    // Esto puede variar dependiendo de cómo esté estructurada tu base de datos y tu aplicación
     const asistenteDeleted = await Asistente.findOneAndDelete({
       eventoConfirmado: eventoId
     });
