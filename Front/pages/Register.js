@@ -1,5 +1,6 @@
 import Login from './Login';
 import Eventos from './Eventos';
+import { showAlert } from '../alert/alert';
 
 //! Crear una función llamada 'template' para actualizar los elementos del DOM para esta sección:
 const template = () => `
@@ -57,7 +58,7 @@ const registerSubmit = async (event) => {
 
   // Verificar si alguno de los campos está vacío o si la contraseña no tiene al menos 8 caracteres:
   if (!nombre || !email || !contraseña || contraseña.length < 8) {
-    console.error(error)
+    showAlert('Por favor, rellena todos los campos correctamente.', 'error');
     return;
   }
 
@@ -106,7 +107,6 @@ const registerSubmit = async (event) => {
     localStorage.setItem('user', JSON.stringify(userData));
   } catch (error) {
     console.log('Error durante el registro:', error);
-  
   }
   Eventos();
 };

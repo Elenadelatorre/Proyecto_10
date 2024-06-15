@@ -1,5 +1,3 @@
-import { getEventos } from './eventosModule';
-
 //! Definir una function llamada 'template' para los elementos del DOM:
 export const template = () => `
 <section id="asistentes">

@@ -1,0 +1,44 @@
+.alert-container {
+  position: fixed;
+  top: 150px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #f44336;
+  color: white;
+  padding: 16px;
+  border-radius: 4px;
+  z-index: 1000;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 300px;
+  max-width: 80%;
+}
+
+.alert-message {
+  flex: 1;
+  margin-right: 16px;
+}
+
+.close-alert-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.alert-container.success {
+  background-color: white;
+  color: black;
+}
+
+.alert-container.success .close-alert-btn {
+  color: black;
+}
+
+.alert-container.error {
+  background-color: #f44336;
+  color: white;
+}

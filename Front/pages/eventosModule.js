@@ -1,6 +1,6 @@
+import { showAlert } from '../alert/alert.js';
 import { showAsistentesByEvento } from './asistentesModule.js';
 import eliminarEvento from './eliminarEventos.js';
-
 
 //! Función para mostrar los elementos en el DOM:
 export const template = () => `
@@ -102,7 +102,39 @@ export const getEventos = async () => {
         }" style="display: none;">Eliminar Evento</button>
       `;
       eventosContainer.appendChild(li);
+      //Abrir un modal si el usuario no está registrado:
+      const openAsistenciaModal = (eventoId) => {
+        const asistenciaModal = document.getElementById('asistencia-modal');
+        asistenciaModal.style.display = 'block';
+        const asistenciaForm = document.getElementById('asistencia-form');
 
+        asistenciaForm.onsubmit = async (e) => {
+          e.preventDefault();
+          // Verificar si el usuario está autenticado
+          const user = JSON.parse(localStorage.getItem('user'));
+          let userOrContact = {};
+          if (user) {
+            userOrContact = { user };
+          } else {
+            const nombre = document.getElementById('nombre').value;
+            const email = document.getElementById('email').value;
+            userOrContact = { nombre, email };
+
+          }
+
+          await handleAddToAsistencias(eventoId, userOrContact);
+          closeAsistenciaModal();
+          asistenciaModal.style.display = 'none';
+        };
+        document.getElementById('cancelar-asistencia').onclick = () => {
+          asistenciaModal.style.display = 'none';
+        };
+      };
+
+      const closeAsistenciaModal = () => {
+        const asistenciaModal = document.getElementById('asistencia-modal');
+        asistenciaModal.style.display = 'none';
+      };
       // Agregar evento clic al botón de 'Asistir' o 'Cancelar asistencia'
       const asistenciaBtn = li.querySelector('.asistencia-btn');
       asistenciaBtn.addEventListener('click', async (e) => {
@@ -177,6 +209,8 @@ export const handleAddToAsistencias = async (eventoId, user) => {
       button.textContent = 'Cancelar asistencia 👎🏻';
       button.classList.add('cancelar-asistencia');
     }
+    showAlert('Asistencia marcada con éxito', 'success');
+    getEventos();
   } catch (error) {
     console.error('Error en la llamada fetch:', error);
   }
@@ -206,6 +240,8 @@ export const handleRemoveFromAsistencias = async (eventoId, button) => {
     // Actualizar el botón de 'Asistir'
     button.textContent = 'Asistir 👍🏻';
     button.classList.remove('cancelar-asistencia');
+    showAlert('Asistencia cancelada con éxito', 'error');
+    getEventos();
   } catch (error) {
     console.error('Error al cancelar la asistencia:', error);
   }
@@ -240,8 +276,8 @@ export const getEventoEspecifico = async (eventoId) => {
     `;
 
     // Agregar un evento clic al botón de 'volver a eventos':
-    document.getElementById('volver').addEventListener('click',  () => {
-       getEventos();
+    document.getElementById('volver').addEventListener('click', () => {
+      getEventos();
       document.getElementById('crear-evento-btn').style.display = 'block';
     });
   } catch (error) {
@@ -315,6 +351,3 @@ export const handleCrearEvento = async () => {
     // Mostrar mensaje de error al usuario
   }
 };
-document.addEventListener('DOMContentLoaded', () => {
-  getEventos();
-});
