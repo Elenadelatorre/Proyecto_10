@@ -1,13 +1,17 @@
 import './style.css';
 
 // Importar los módulos necesarios:
-import Login from './pages/Login';
-import Logout from './pages/Logout';
-import Eventos from './pages/Eventos';
-import EventosConfirmados from './pages/EventosConfirmados';
+import Login from './src/pages/Login';
+import Logout from './src/pages/Logout';
+import Eventos from './src/pages/Eventos';
+import EventosConfirmados from './src/pages/EventosConfirmados';
+import { Header } from './src/components/Header/Header';
+import { Footer } from './src/components/Footer/Footer';
 
 // Crear los eventos de clic a los enlaces de la página y asegurarnos que cargue la página completa:
 document.addEventListener('DOMContentLoaded', function () {
+  Header();
+  Footer();
   Eventos();
 
   document.getElementById('home').addEventListener('click', () => {

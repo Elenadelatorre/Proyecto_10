@@ -1,0 +1,77 @@
+/* HEADER */
+header {
+  position: sticky;
+  top: 0;
+  background-color: var(--ev-color-3);
+  color: var(--ev-color-5);
+  padding: var(--rtc-padding-xs);
+  gap: var(--rtc-gap-s);
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  align-items: center;
+  height: 10vh;
+  z-index: 10;
+}
+
+#home {
+  font-family: 'Arial', sans-serif;
+  font-size: 1.4em;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+  border: none;
+  margin: 0;
+  transition: transform 0.3s, color 0.3s;
+}
+
+#home:hover {
+  transform: scale(1.1);
+}
+
+header #logoutlink {
+  background-color: var(--ev-color-6);
+  border: none;
+}
+
+header #logoutlink:hover {
+  background-color: var(--ev-color-5);
+  color: var(--ev-color-6);
+}
+
+header a {
+  color: var(--ev-color-5);
+  font-weight: 600;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border: 1px solid white;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  -webkit-transition: background-color 0.2s;
+  -moz-transition: background-color 0.2s;
+  -ms-transition: background-color 0.2s;
+  -o-transition: background-color 0.2s;
+}
+
+header #misEventoslink,
+header #eventoslink,
+header #registerlink {
+  background-color: var(--ev-color-3);
+  color: var(--ev-color-5);
+}
+
+header #misEventoslink:hover,
+header #eventoslink:hover,
+header #registerlink:hover {
+  background-color: var(--ev-color-5);
+  color: var(--ev-color-5);
+}
+
+header #loginlink {
+  background-color: var(--ev-color-5);
+  color: var(--ev-color-3);
+}
+
+header #loginlink:hover {
+  background-color: var(--ev-color-3);
+  color: var(--ev-color-5);
+}

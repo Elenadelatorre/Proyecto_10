@@ -1,35 +1,7 @@
 import Login from './Login';
 import Eventos from './Eventos';
-import { showAlert } from '../alert/alert';
-
-//! Crear una función llamada 'template' para actualizar los elementos del DOM para esta sección:
-const template = () => `
-  <section id="register">
-    <h2>Registro</h2>
-    <form id="register-form" class="form">
-      <label for="nombre">Nombre de usuario</label>
-      <input type="text" placeholder="Nombre completo" id="nombre" name="nombre" required/>
-
-      <label for="email">Correo electrónico</label>
-      <input type="email" placeholder="Correo electrónico" id="email" name="email" required/>
-
-      <div id="rol-container" style="display: none;">
-        <label for="rol">Rol:</label>
-        <select id="rol" name="rol">
-          <option value="user">Usuario</option>
-          <option value="admin">Administrador</option>
-        </select>
-      </div>
-
-      <label for="password">Contraseña</label>
-      <input type="password" id="password" placeholder="Contraseña" name="password" required/>
-      <span id="password-help" style="color: #666; font-size: 0.8rem;">La contraseña debe tener al menos 8 caracteres.</span><br>
-      <p  class="link">¿Tienes una cuenta? <a id="login-link" href="#">Entrar</a></p>
-
-      <button type="submit" id="registerbtn">Registrarse</button>
-    </form>
-  </section>
-`;
+import { showAlert } from '../components/alert/alert';
+import { formRegister } from '../components/Forms/FormRegister';
 
 // Crear una función para actualizar la visibilidad del enlace de 'Cerrar sesión':
 export const updateLogoutLinkVisibility = (isVisible) => {
@@ -113,10 +85,11 @@ const registerSubmit = async (event) => {
 
 //! Crear una función llamada 'Register' que actualiza el contenido de la sección de registro en el DOM:
 const Register = () => {
+  const mainContent = document.querySelector('main');
+  mainContent.innerHTML = ''; // Limpiar el contenido actual
+  mainContent.appendChild(formRegister());
   //Actualizar la visibilidad del enlace de cierre de sesión:
   updateLogoutLinkVisibility(false);
-
-  document.querySelector('main').innerHTML = template();
 
   // Verificar si el usuario está registrado como administrador:
   const currentUser = JSON.parse(localStorage.getItem('user'));

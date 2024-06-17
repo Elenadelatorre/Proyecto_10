@@ -1,31 +1,8 @@
-import { showAlert } from '../alert/alert';
+import { formLogin } from '../components/Forms/FormLogin';
+import { showAlert } from '../components/alert/alert';
 import Eventos from './Eventos';
 import Register, { updateLogoutLinkVisibility } from './Register';
 
-//! Crear una función llamada 'template' para crear los elementos del DOM:
-const template = () => {
-  if (localStorage.getItem('user')) {
-    const user = JSON.parse(localStorage.getItem('user'));
-
-    // Si hay un usuario, muestra un mensaje de bienvenida con su nombre
-    return `<section id="login">
-      <h2>¡Bienvenido de nuevo, ${user.nombre}!</h2>
-    </section>`;
-  } else {
-    return `<section id="login" class="login"> <h2>Inicio de sesión</h2>
-        <form id="login-form">
-          <label for="email">Correo electrónico</label>
-          <input type="email" placeholder="Correo electrónico" id="email" required/>
-
-          <label for="password">Contraseña</label>
-          <input type="password" id="password" placeholder="Contraseña" required/>
-          <p class="link">¿No tienes cuenta? <a id="register-link" href="#">Regístrate</a></p>
-
-          <button type="submit" id="loginbtn">Entrar</button>
-        </form>
-            </section>`;
-  }
-};
 //! Crear una función llamada 'loginSubmit' para procesar el envío del formulario de inicio de sesión:
 const loginSubmit = async (event) => {
   event.preventDefault();
@@ -35,16 +12,23 @@ const loginSubmit = async (event) => {
 
   try {
     // Realiza una solicitud a la API para iniciar sesión:
-    const response = await fetch('http://localhost:3000/api/v1/users/login', {
+    const objetoFinal = JSON.stringify({
+      email,
+      contraseña
+    });
+
+    const opciones = {
+      method: 'POST',
+      body: objetoFinal,
       headers: {
         'Content-Type': 'application/json'
-      },
-      method: 'POST',
-      body: JSON.stringify({
-        email: email,
-        contraseña: contraseña
-      })
-    });
+      }
+    };
+
+    const response = await fetch(
+      'http://localhost:3000/api/v1/users/login',
+      opciones
+    );
 
     // Verifica si la respuesta es exitosa
     if (!response.ok) {
@@ -77,13 +61,14 @@ const loginSubmit = async (event) => {
 
 //! Crear una función llamada 'Login' para actualizar los elementos de la sección de inicio de sesión en el DOM:
 const Login = () => {
+  const mainContent = document.querySelector('main');
+  mainContent.innerHTML = ''; // Limpiar el contenido actual
+  mainContent.appendChild(formLogin());
   // Ocultar el enlace de cierre de sesión:
   updateLogoutLinkVisibility(false);
 
   // Ocultar el enlace de inicio de sesión, ya que es lo que vas a hacer:
   document.getElementById('loginlink').style.display = 'none';
-
-  document.querySelector('main').innerHTML = template();
 
   // Si no hay un usuario:
   if (!localStorage.getItem('user')) {
@@ -94,7 +79,8 @@ const Login = () => {
       .querySelector('#login-form')
       .addEventListener('submit', loginSubmit);
   }
-  document.querySelector('#register-link').addEventListener('click', () => {
+  document.querySelector('#register-link').addEventListener('click', (e) => {
+    e.preventDefault();
     // Llama a la función `Login` para redirigir al usuario a la sección de inicio de sesión
     Register();
   });

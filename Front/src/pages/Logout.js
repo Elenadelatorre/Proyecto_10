@@ -1,4 +1,4 @@
-import { showAlert } from '../alert/alert';
+import { showAlert } from '../components/alert/alert';
 import Login from './Login';
 
 //! Crear una función llamada 'Logout' para cerrar sesión del usuario:

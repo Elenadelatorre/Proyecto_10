@@ -1,4 +1,4 @@
-import { showAlert } from '../alert/alert.js';
+import { showAlert } from '../components/alert/alert.js';
 import { showAsistentesByEvento } from './asistentesModule.js';
 import eliminarEvento from './eliminarEventos.js';
 
@@ -119,7 +119,6 @@ export const getEventos = async () => {
             const nombre = document.getElementById('nombre').value;
             const email = document.getElementById('email').value;
             userOrContact = { nombre, email };
-
           }
 
           await handleAddToAsistencias(eventoId, userOrContact);
