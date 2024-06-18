@@ -31,20 +31,19 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Función para mostrar la alerta
-export const showAlert = (message, type = 'default', duration = 5000) => {
+export const showAlert = (message, type = 'default', duration = 4000) => {
   const alertContainer = document.getElementById('alert-container');
   const alertMessage = document.getElementById('alert-message');
 
   alertMessage.textContent = message;
   switch (type) {
     case 'success':
-      alertContainer.classList.add('success'); // Añadir clase 'success'
+      alertContainer.classList.remove('error');
+      alertContainer.classList.add('success'); 
       break;
     case 'error':
-      alertContainer.classList.add('error'); // Añadir clase 'error'
-      break;
-    default:
-      alertContainer.classList.add('default'); // Añadir clase por defecto
+      alertContainer.classList.remove('success');
+      alertContainer.classList.add('error'); 
       break;
   }
   alertContainer.style.display = 'flex';

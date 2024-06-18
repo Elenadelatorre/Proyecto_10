@@ -59,7 +59,6 @@ const Eventos = () => {
   document.getElementById('volver').addEventListener('click', () => {
     document.getElementById('eventos-container').style.display = 'block';
     document.getElementById('asistentes-section').style.display = 'none';
-    document.querySelector('.eventos').style.display = 'block';
   });
 };
 

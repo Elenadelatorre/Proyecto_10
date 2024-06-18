@@ -21,14 +21,16 @@ export const formLogin = () => {
     const emailField = FieldForm({
       labelText: 'Correo electrónico',
       type: 'email',
-      for: 'email'
+      for: 'email',
+      id: 'email'
     });
     loginForm.appendChild(emailField);
 
     const passwordField = FieldForm({
       labelText: 'Contraseña',
       type: 'password',
-      for: 'password'
+      for: 'password',
+      id: 'password'
     });
     loginForm.appendChild(passwordField);
 

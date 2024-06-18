@@ -21,6 +21,7 @@ export const EventosConfirmados = async () => {
     for (const evento of eventos) {
       let usuarioAsistente = false;
 
+      const userLoggedIn = JSON.parse(localStorage.getItem('user'));
       // Realizar solicitud para verificar la asistencia del usuario a este evento
       if (userLoggedIn) {
         const responseAsistencia = await fetch(

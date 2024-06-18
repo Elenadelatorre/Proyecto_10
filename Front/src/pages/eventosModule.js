@@ -102,6 +102,7 @@ export const getEventos = async () => {
         }" style="display: none;">Eliminar Evento</button>
       `;
       eventosContainer.appendChild(li);
+
       //Abrir un modal si el usuario no está registrado:
       const openAsistenciaModal = (eventoId) => {
         const asistenciaModal = document.getElementById('asistencia-modal');
@@ -178,27 +179,36 @@ export const getEventos = async () => {
   }
 };
 
+//!Crear VARIABLES para fetch:
+const fetchData = async (url, data, method) => {
+  try {
+    const response = await fetch(url, {
+      method: method,
+      body: JSON.stringify(data),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Error en la solicitud');
+    }
+
+    return response.json();
+  } catch (error) {
+    console.error('Error en la llamada fetch:', error);
+    throw error;
+  }
+};
 //! Función para manejar la asistencia a los eventos
 export const handleAddToAsistencias = async (eventoId, user) => {
   try {
-    const postResponse = await fetch(
+    await fetchData(
       `http://localhost:3000/api/v1/eventos/${eventoId}/asistencias`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          nombre: user.nombre,
-          email: user.email
-        })
-      }
+      { nombre: user.nombre, email: user.email },
+      'POST'
     );
-
-    if (!postResponse.ok) {
-      const errorData = await postResponse.json();
-      throw new Error(errorData.message || 'Error al marcar asistencia');
-    }
 
     // Actualizar botón de asistencia si es necesario
     const button = document.querySelector(
@@ -220,21 +230,11 @@ export const handleRemoveFromAsistencias = async (eventoId, button) => {
   try {
     const user = JSON.parse(localStorage.getItem('user'));
 
-    const deleteResponse = await fetch(
+    await fetchData(
       `http://localhost:3000/api/v1/eventos/${eventoId}/asistencias`,
-      {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ asistenteId: user._id })
-      }
+      { asistenteId: user._id },
+      'DELETE'
     );
-
-    if (!deleteResponse.ok) {
-      const errorData = await deleteResponse.json();
-      throw new Error(errorData.message || 'Error al cancelar asistencia');
-    }
 
     // Actualizar el botón de 'Asistir'
     button.textContent = 'Asistir 👍🏻';

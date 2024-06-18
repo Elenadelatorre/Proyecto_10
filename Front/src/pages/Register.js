@@ -1,4 +1,3 @@
-import Login from './Login';
 import Eventos from './Eventos';
 import { showAlert } from '../components/alert/alert';
 import { formRegister } from '../components/Forms/FormRegister';
@@ -19,7 +18,6 @@ const registerSubmit = async (event) => {
   const email = document.querySelector('#email').value;
   const contraseña = document.querySelector('#password').value;
   const rol = document.getElementById('rol').value;
-
   const currentUser = JSON.parse(localStorage.getItem('user'));
 
   // Verificar si el usuario está registrado como administrador:
@@ -34,52 +32,43 @@ const registerSubmit = async (event) => {
     return;
   }
 
-  try {
-    // Realizar una solicitud a la API para registrar un nuevo usuario:
-    const response = await fetch(
-      'http://localhost:3000/api/v1/users/register',
-      {
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        method: 'POST',
-        body: JSON.stringify({
-          nombre,
-          email,
-          contraseña: contraseña,
-          rol
-        })
+  const fetchData = async (url, data) => {
+    const response = await fetch(url, {
+      method: 'POST',
+      body: JSON.stringify(data),
+      headers: {
+        'Content-Type': 'application/json'
       }
-    );
+    });
+
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.message || 'Error en el registro');
+      throw new Error(errorData.message || 'Error en la solicitud');
     }
-    // Iniciar sesión automáticamente después del registro exitoso:
-    const loginResponse = await fetch(
+
+    return response.json();
+  };
+
+  try {
+    // Registrar nuevo usuario
+    await fetchData('http://localhost:3000/api/v1/users/register', {
+      nombre,
+      email,
+      contraseña,
+      rol
+    });
+
+    // Iniciar sesión automáticamente después del registro exitoso
+    const userData = await fetchData(
       'http://localhost:3000/api/v1/users/login',
-      {
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        method: 'POST',
-        body: JSON.stringify({
-          email,
-          contraseña: contraseña
-        })
-      }
+      { email, contraseña }
     );
 
-    if (!loginResponse.ok) {
-      const errorData = await loginResponse.json();
-      throw new Error(errorData.message || 'Error en el inicio de sesión');
-    }
-
-    const userData = await loginResponse.json();
     localStorage.setItem('user', JSON.stringify(userData));
   } catch (error) {
     console.log('Error durante el registro:', error);
   }
+
   Eventos();
 };
 
@@ -101,11 +90,6 @@ const Register = () => {
   document
     .querySelector('#register-form')
     .addEventListener('submit', registerSubmit);
-
-  // Agrega un evento de clic al formulario para procesar el evento de envío:
-  document.querySelector('#login-link').addEventListener('click', () => {
-    Login();
-  });
 };
 
 export default Register;
