@@ -3,46 +3,6 @@ import { showAsistentesByEvento } from './asistentesModule.js';
 import eliminarEvento from './eliminarEventos.js';
 
 //! Función para mostrar los elementos en el DOM:
-export const template = () => `
-  <section id="eventos">
-    <h2 class="eventos-title">Próximos eventos</h2>
-    <button id="crear-evento-btn">Crear nuevo evento ➕</button>
-    <ul id="eventos-container"></ul>
-    <div id="asistentes-section" style="display: none;">
-      <h2 class="asistentes">Asistentes</h2>
-      <ul id="asistentes-container"></ul>
-      <button id="volver">Volver a eventos</button>
-    </div>
-    <div id="crear-evento-modal" class="modal" style="display: none">
-      <h2 class="eventos" class="modal-title">Crear Nuevo Evento</h2>
-      <form id="nuevo-evento-form" enctype="multipart/form-data">
-        <label for="titulo">Título:</label>
-        <input type="text" id="titulo" name="titulo"><br>
-        <label for="fecha">Fecha:</label>
-        <input type="date" id="fecha" name="fecha"><br>
-        <label for="ubicacion">Ubicación:</label>
-        <input type="text" id="ubicacion" name="ubicacion"><br>
-        <label for="descripcion">Descripción:</label><br>
-        <textarea id="descripcion" name="descripcion"></textarea><br>
-        <label for="img">Imagen:</label>
-        <input type="file" id="img" name="img" accept="image/*"><br>
-        <button id="crear-evento">Crear Evento</button>
-        <button type="button" id="cancelar-crear-evento">Cancelar</button>
-      </form>
-    </div>
-    <div id="asistencia-modal" class="modal" style="display: none;">
-      <h2>Asistencia al Evento</h2>
-      <form id="asistencia-form">
-        <label for="nombre">Nombre:</label>
-        <input type="text" id="nombre" name="nombre" required><br>
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required><br>
-        <button type="submit">Confirmar Asistencia</button>
-        <button type="button" id="cancelar-asistencia">Cancelar</button>
-      </form>
-    </div>
-  </section>
-`;
 
 //! Función para obtener y mostrar eventos desde la BBDD:
 export const getEventos = async () => {
@@ -273,12 +233,6 @@ export const getEventoEspecifico = async (eventoId) => {
         <button id="volver">Volver a eventos</button>
       </div>
     `;
-
-    // Agregar un evento clic al botón de 'volver a eventos':
-    document.getElementById('volver').addEventListener('click', () => {
-      getEventos();
-      document.getElementById('crear-evento-btn').style.display = 'block';
-    });
   } catch (error) {
     console.error('Error al obtener los detalles del evento:', error);
   }
@@ -316,30 +270,11 @@ export const handleCrearEvento = async () => {
     const imgURL = cloudinaryData.secure_url;
 
     // Realizar la solicitud a la API para crear un nuevo evento:
-    const postResponse = await fetch(
+    await fetchData(
       'http://localhost:3000/api/v1/eventos/nuevoEvento',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          titulo,
-          fecha,
-          ubicacion,
-          descripcion,
-          img: imgURL
-        })
-      }
+      { titulo, fecha, ubicacion, descripcion, img: imgURL },
+      'POST'
     );
-    console.log(postResponse);
-    if (!postResponse.ok) {
-      const errorData = await postResponse.json();
-      throw new Error(errorData.message || 'Error al crear el evento');
-    }
-
-    const responseData = await postResponse.json();
-    console.log(responseData);
 
     // Ocultar el formulario de creación de eventos:
     document.getElementById('crear-evento-modal').style.display = 'none';

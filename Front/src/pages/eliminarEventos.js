@@ -2,31 +2,40 @@
 const eliminarEvento = async (eventoId) => {
   const currentUser = JSON.parse(localStorage.getItem('user'));
   if (!currentUser || currentUser.rol !== 'admin') {
-    console.log("Error", error)
+    console.log('Error', error);
     return;
   }
-
-  try {
-    const response = await fetch(
-      `http://localhost:3000/api/v1/eventos/${eventoId}`,
-      {
-        method: 'DELETE',
+  const fetchData = async (url, data, method) => {
+    try {
+      const response = await fetch(url, {
+        method: method,
+        body: JSON.stringify(data),
         headers: {
           'Content-Type': 'application/json'
         }
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Error en la solicitud');
       }
-    );
+
+      return response.json();
+    } catch (error) {
+      console.error('Error en la llamada fetch:', error);
+      throw error;
+    }
+  };
+  try {
+    await fetch(`http://localhost:3000/api/v1/eventos/${eventoId}`, 'DELETE');
 
     if (!response.ok) {
       throw new Error('Error al eliminar el evento');
     }
 
-    const responseData = await response.json();
- 
     await getEventos();
   } catch (error) {
     console.error('Error al eliminar el evento:', error);
-  
   }
 };
 

@@ -1,4 +1,5 @@
-import { template, getEventos, handleCrearEvento } from './eventosModule.js';
+import { eventosContainer } from '../components/eventosContainer/eventosContainer.js';
+import { getEventos, handleCrearEvento } from './eventosModule.js';
 
 //! Crear una función para actualizar el contenido de la sección de eventos en el DOM:
 const Eventos = () => {
@@ -23,8 +24,9 @@ const Eventos = () => {
     loginlink.style.display = 'none';
   }
 
-  // Definir  el HTML generado por la función 'template':
-  document.querySelector('main').innerHTML = template();
+  const mainContent = document.querySelector('main');
+  mainContent.innerHTML = ''; // Limpiar el contenido actual
+  mainContent.appendChild(eventosContainer());
 
   //Mostrar o no el botón de "Crear nuevo evento" dependiendo si ha iniciado sesión o no:
   const crearEventoBtn = document.getElementById('crear-evento-btn');
@@ -39,27 +41,35 @@ const Eventos = () => {
   });
 
   // Agregar un evento clic al botón que crea el evento dentro del formulario:
-  document
-    .querySelector('#crear-evento')
-    .addEventListener('click', async (event) => {
+  const crearNuevoEventoForm = document.getElementById('crear-evento');
+  if (crearNuevoEventoForm) {
+    crearNuevoEventoForm.addEventListener('click', async (event) => {
       event.preventDefault(); // Evita que el formulario se envíe normalmente
       await handleCrearEvento();
     });
+  }
 
   // Agregar un evento clic al botón 'cancelar' para cerrar el formulario:
-  document
-    .getElementById('cancelar-crear-evento')
-    .addEventListener('click', () => {
+  const cancelarCrearEventoBtn = document.getElementById(
+    'cancelar-crear-evento'
+  );
+  if (cancelarCrearEventoBtn) {
+    cancelarCrearEventoBtn.addEventListener('click', () => {
       document.getElementById('crear-evento-modal').style.display = 'none';
       document.getElementById('asistentes-section').style.display = 'none';
       document.getElementById('eventos-container').style.display = 'block';
     });
+  }
 
   // Agregar un evento clic al botón de "volver a eventos" para mostrar la sección de eventos:
-  document.getElementById('volver').addEventListener('click', () => {
-    document.getElementById('eventos-container').style.display = 'block';
-    document.getElementById('asistentes-section').style.display = 'none';
-  });
-};
 
+  const volverBtn = document.getElementById('volver');
+  if (volverBtn) {
+    volverBtn.addEventListener('click', () => {
+      document.getElementById('eventos-container').style.display = 'block';
+      document.getElementById('asistentes-section').style.display = 'none';
+      getEventos();
+    });
+  }
+};
 export default Eventos;
