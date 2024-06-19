@@ -1,17 +1,12 @@
 import { showAlert } from '../components/alert/alert.js';
+import { DELETE, GET, POST } from '../components/fetchData/fetchData.js';
 import { showAsistentesByEvento } from './asistentesModule.js';
 import eliminarEvento from './eliminarEventos.js';
-
-//! Función para mostrar los elementos en el DOM:
 
 //! Función para obtener y mostrar eventos desde la BBDD:
 export const getEventos = async () => {
   try {
-    const response = await fetch('http://localhost:3000/api/v1/eventos');
-
-    if (!response.ok) {
-      throw new Error('Error al obtener los eventos');
-    }
+    const response = await GET('/eventos');
 
     const eventos = await response.json();
     eventos.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
@@ -25,8 +20,8 @@ export const getEventos = async () => {
       // Consultar el estado de asistencia desde la API cada vez que se itera sobre un evento
       let usuarioAsistente = false;
       if (userLoggedIn) {
-        const responseAsistencia = await fetch(
-          `http://localhost:3000/api/v1/asistentes/${evento._id}/asistencias/${userLoggedIn.email}`
+        const responseAsistencia = await GET(
+          `/asistentes/${evento._id}/asistencias/${userLoggedIn.email}`
         );
 
         if (responseAsistencia.ok) {
@@ -139,36 +134,13 @@ export const getEventos = async () => {
   }
 };
 
-//!Crear VARIABLES para fetch:
-const fetchData = async (url, data, method) => {
-  try {
-    const response = await fetch(url, {
-      method: method,
-      body: JSON.stringify(data),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Error en la solicitud');
-    }
-
-    return response.json();
-  } catch (error) {
-    console.error('Error en la llamada fetch:', error);
-    throw error;
-  }
-};
 //! Función para manejar la asistencia a los eventos
 export const handleAddToAsistencias = async (eventoId, user) => {
   try {
-    await fetchData(
-      `http://localhost:3000/api/v1/eventos/${eventoId}/asistencias`,
-      { nombre: user.nombre, email: user.email },
-      'POST'
-    );
+    await POST(`/eventos/${eventoId}/asistencias`, {
+      nombre: user.nombre,
+      email: user.email
+    });
 
     // Actualizar botón de asistencia si es necesario
     const button = document.querySelector(
@@ -190,11 +162,7 @@ export const handleRemoveFromAsistencias = async (eventoId, button) => {
   try {
     const user = JSON.parse(localStorage.getItem('user'));
 
-    await fetchData(
-      `http://localhost:3000/api/v1/eventos/${eventoId}/asistencias`,
-      { asistenteId: user._id },
-      'DELETE'
-    );
+    await DELETE(`/eventos/${eventoId}/asistencias`, { asistenteId: user._id });
 
     // Actualizar el botón de 'Asistir'
     button.textContent = 'Asistir 👍🏻';
@@ -209,9 +177,7 @@ export const handleRemoveFromAsistencias = async (eventoId, button) => {
 export const getEventoEspecifico = async (eventoId) => {
   try {
     // Realiza una solicitud a la API para obtener los detalles del evento:
-    const response = await fetch(
-      `http://localhost:3000/api/v1/eventos/${eventoId}`
-    );
+    const response = await GET(`/eventos/${eventoId}`);
 
     if (!response.ok) {
       throw new Error('Error al obtener los detalles del evento');
@@ -270,11 +236,13 @@ export const handleCrearEvento = async () => {
     const imgURL = cloudinaryData.secure_url;
 
     // Realizar la solicitud a la API para crear un nuevo evento:
-    await fetchData(
-      'http://localhost:3000/api/v1/eventos/nuevoEvento',
-      { titulo, fecha, ubicacion, descripcion, img: imgURL },
-      'POST'
-    );
+    await POST('/eventos/nuevoEvento', {
+      titulo,
+      fecha,
+      ubicacion,
+      descripcion,
+      img: imgURL
+    });
 
     // Ocultar el formulario de creación de eventos:
     document.getElementById('crear-evento-modal').style.display = 'none';

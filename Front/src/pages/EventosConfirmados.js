@@ -1,3 +1,4 @@
+import { GET } from '../components/fetchData/fetchData.js';
 import { showAsistentesByEvento } from './asistentesModule.js';
 import { getEventoEspecifico } from './eventosModule.js';
 
@@ -7,12 +8,10 @@ export const EventosConfirmados = async () => {
 
   try {
     // Realizar solicitud para obtener los eventos desde la API
-    const responseEventos = await fetch('http://localhost:3000/api/v1/eventos');
-    if (!responseEventos.ok) {
-      throw new Error('Error al obtener los eventos');
-    }
-
+    const responseEventos = await GET('/eventos');
     const eventos = await responseEventos.json();
+    eventos.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+
     document.querySelector('.eventos-title').textContent = 'Mis Eventos';
     const eventosContainer = document.querySelector('#eventos-container');
     eventosContainer.innerHTML = '';
@@ -24,8 +23,8 @@ export const EventosConfirmados = async () => {
       const userLoggedIn = JSON.parse(localStorage.getItem('user'));
       // Realizar solicitud para verificar la asistencia del usuario a este evento
       if (userLoggedIn) {
-        const responseAsistencia = await fetch(
-          `http://localhost:3000/api/v1/asistentes/${evento._id}/asistencias/${userLoggedIn.email}`
+        const responseAsistencia = await GET(
+          `/asistentes/${evento._id}/asistencias/${userLoggedIn.email}`
         );
 
         if (responseAsistencia.ok) {
@@ -51,6 +50,7 @@ export const EventosConfirmados = async () => {
           }">Ver Asistentes</button>
         `;
         eventosContainer.appendChild(li);
+        
 
         // Agregar evento clic al botón de 'Ver asistentes':
         const verAsistentesBtn = li.querySelector('.ver-asistentes-btn');

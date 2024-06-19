@@ -27,7 +27,7 @@ const eliminarEvento = async (eventoId) => {
     }
   };
   try {
-    await fetch(`http://localhost:3000/api/v1/eventos/${eventoId}`, 'DELETE');
+    await fetchData(`http://localhost:3000/api/v1/eventos/${eventoId}`, 'DELETE');
 
     if (!response.ok) {
       throw new Error('Error al eliminar el evento');

@@ -1,5 +1,6 @@
 import { formLogin } from '../components/Forms/FormLogin';
 import { showAlert } from '../components/alert/alert';
+import { POST } from '../components/fetchData/fetchData';
 import Eventos from './Eventos';
 import Register, { updateLogoutLinkVisibility } from './Register';
 
@@ -12,27 +13,13 @@ const loginSubmit = async (event) => {
 
   try {
     // Realiza una solicitud a la API para iniciar sesión:
-    const objetoFinal = JSON.stringify({
+    const response = await POST('/users/login', {
       email,
       contraseña
     });
 
-    const opciones = {
-      method: 'POST',
-      body: objetoFinal,
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    };
-
-    const response = await fetch(
-      'http://localhost:3000/api/v1/users/login',
-      opciones
-    );
-
     // Verifica si la respuesta es exitosa
     if (!response.ok) {
-      const errorUser = await response.json();
       showAlert('Usuario o contraseña incorrectos', 'error');
       throw new Error(errorUser.message || 'Fallo en el inicio de sesión');
     }

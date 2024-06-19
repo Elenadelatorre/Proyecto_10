@@ -1,6 +1,7 @@
 import Eventos from './Eventos';
 import { showAlert } from '../components/alert/alert';
 import { formRegister } from '../components/Forms/FormRegister';
+import { POST } from '../components/fetchData/fetchData';
 
 // Crear una función para actualizar la visibilidad del enlace de 'Cerrar sesión':
 export const updateLogoutLinkVisibility = (isVisible) => {
@@ -32,26 +33,9 @@ const registerSubmit = async (event) => {
     return;
   }
 
-  const fetchData = async (url, data) => {
-    const response = await fetch(url, {
-      method: 'POST',
-      body: JSON.stringify(data),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Error en la solicitud');
-    }
-
-    return response.json();
-  };
-
   try {
     // Registrar nuevo usuario
-    await fetchData('http://localhost:3000/api/v1/users/register', {
+    await POST('/users/register', {
       nombre,
       email,
       contraseña,
@@ -59,10 +43,7 @@ const registerSubmit = async (event) => {
     });
 
     // Iniciar sesión automáticamente después del registro exitoso
-    const userData = await fetchData(
-      'http://localhost:3000/api/v1/users/login',
-      { email, contraseña }
-    );
+    const userData = await POST('/users/login', { email, contraseña });
 
     localStorage.setItem('user', JSON.stringify(userData));
   } catch (error) {
