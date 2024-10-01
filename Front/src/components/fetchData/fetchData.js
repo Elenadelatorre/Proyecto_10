@@ -1,7 +1,7 @@
 // api.js
 
 //const URL_PRINCIPAL = 'http://localhost:3000/api/v1';
-const URL_PRINCIPAL = 'http://localhost:3000/api/v1';
+const URL_PRINCIPAL = 'http://proyecto-10-e2jjf9us3-elena-de-la-torres-projects.vercel.app/api/v1';
 
 const fetchData = async (url, options = {}) => {
   try {
