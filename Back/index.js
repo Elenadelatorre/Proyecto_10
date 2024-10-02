@@ -27,7 +27,7 @@ app.use('/api/v1/asistentes', asistentesRouter);
 app.use('/api/v1/users', usersRouter);
 
 const corsOptions = {
-  origin: 'https://proyecto-eventos-delta.vercel.app',
+  origin: '*',
   optionsSuccessStatus: 200
 };
 
