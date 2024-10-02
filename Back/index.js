@@ -11,7 +11,7 @@ const cloudinary = require('cloudinary').v2;
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
+
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
@@ -26,9 +26,8 @@ app.use('/api/v1/eventos', eventosRouter);
 app.use('/api/v1/asistentes', asistentesRouter);
 app.use('/api/v1/users', usersRouter);
 
-
 const corsOptions = {
-  origin: 'https://proyecto-eventos-delta.vercel.app', 
+  origin: 'https://proyecto-eventos-delta.vercel.app',
   optionsSuccessStatus: 200
 };
 
