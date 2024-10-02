@@ -27,7 +27,7 @@ app.use('/api/v1/asistentes', asistentesRouter);
 app.use('/api/v1/users', usersRouter);
 
 const corsOptions = {
-  origin: 'https://proyecto-eventos-two.vercel.app',
+  origin: 'https://proyecto-10-3ucw.vercel.app/',
   optionsSuccessStatus: 200
 };
 
