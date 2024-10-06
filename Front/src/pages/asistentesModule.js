@@ -1,3 +1,5 @@
+import { GET } from "../components/fetchData/fetchData";
+
 //! Definir una function llamada 'template' para los elementos del DOM:
 export const template = () => `
 <section id="asistentes">
@@ -9,13 +11,7 @@ export const template = () => `
 export const showAsistentesByEvento = async (eventoId) => {
   try {
     // Realiza una solicitud a la API para obtener datos de asistentes
-    const response = await fetch(
-      `http://localhost:3000/api/v1/asistentes/${eventoId}/asistentes`
-    );
-
-    if (!response.ok) {
-      throw new Error('Error al obtener los asistentes');
-    }
+    const response = await GET(`/asistentes/${eventoId}/asistentes`);
 
     const asistentes = await response.json();
 

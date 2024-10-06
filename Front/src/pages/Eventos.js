@@ -66,9 +66,9 @@ const Eventos = () => {
   const volverBtn = document.getElementById('volver');
   if (volverBtn) {
     volverBtn.addEventListener('click', () => {
+      getEventos();
       document.getElementById('eventos-container').style.display = 'block';
       document.getElementById('asistentes-section').style.display = 'none';
-      getEventos();
     });
   }
 };

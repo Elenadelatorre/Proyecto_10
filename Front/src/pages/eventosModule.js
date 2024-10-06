@@ -2,6 +2,7 @@ import { showAlert } from '../components/alert/alert.js';
 import { DELETE, GET, POST } from '../components/fetchData/fetchData.js';
 import { showAsistentesByEvento } from './asistentesModule.js';
 import eliminarEvento from './eliminarEventos.js';
+import Login from './Login.js';
 
 //! Función para obtener y mostrar eventos desde la BBDD:
 export const getEventos = async () => {
@@ -9,6 +10,7 @@ export const getEventos = async () => {
     const response = await GET('/eventos');
 
     const eventos = await response.json();
+    console.log(eventos);
     eventos.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
 
     const eventosContainer = document.querySelector('#eventos-container');
@@ -90,19 +92,25 @@ export const getEventos = async () => {
         const asistenciaModal = document.getElementById('asistencia-modal');
         asistenciaModal.style.display = 'none';
       };
+
       // Agregar evento clic al botón de 'Asistir' o 'Cancelar asistencia'
       const asistenciaBtn = li.querySelector('.asistencia-btn');
       asistenciaBtn.addEventListener('click', async (e) => {
         e.stopPropagation();
         const user = JSON.parse(localStorage.getItem('user'));
-        if (user) {
-          if (usuarioAsistente) {
-            await handleRemoveFromAsistencias(evento._id, asistenciaBtn);
-          } else {
-            await handleAddToAsistencias(evento._id, user);
-          }
+
+        // Verificar si el usuario ha iniciado sesión
+        if (!user) {
+          e.preventDefault();
+          Login();
+          return;
+        }
+
+        // Si el usuario ha iniciado sesión, maneja la asistencia
+        if (usuarioAsistente) {
+          await handleRemoveFromAsistencias(evento._id, asistenciaBtn);
         } else {
-          openAsistenciaModal(evento._id);
+          await handleAddToAsistencias(evento._id, user);
         }
       });
 
@@ -199,6 +207,14 @@ export const getEventoEspecifico = async (eventoId) => {
         <button id="volver">Volver a eventos</button>
       </div>
     `;
+    const volverBtn = document.getElementById('volver');
+    if (volverBtn) {
+      volverBtn.addEventListener('click', () => {
+        eventosContainer.style.display = 'block';
+        document.getElementById('asistentes-section').style.display = 'none';
+        getEventos();
+      });
+    }
   } catch (error) {
     console.error('Error al obtener los detalles del evento:', error);
   }

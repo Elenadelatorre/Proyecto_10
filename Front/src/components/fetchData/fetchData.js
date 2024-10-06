@@ -1,7 +1,7 @@
 
 
 //const URL_PRINCIPAL = 'http://localhost:3000/api/v1';
-const URL_PRINCIPAL = 'https://back-proyecto10-three.vercel.app/api/v1/';
+const URL_PRINCIPAL = 'https://back-proyecto10-three.vercel.app/api/v1';
 
 const fetchData = async (url, options = {}) => {
   try {

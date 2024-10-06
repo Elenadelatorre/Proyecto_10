@@ -9,6 +9,7 @@ const bodyParser = require('body-parser');
 const cloudinary = require('cloudinary').v2;
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -25,13 +26,6 @@ cloudinary.config({
 app.use('/api/v1/eventos', eventosRouter);
 app.use('/api/v1/asistentes', asistentesRouter);
 app.use('/api/v1/users', usersRouter);
-
-const corsOptions = {
-  origin: 'https://proyecto-10-3ucw.vercel.app/',
-  optionsSuccessStatus: 200
-};
-
-app.use(cors(corsOptions));
 
 app.use('*', (req, res, next) => {
   return res.status(404).json('Route not found');

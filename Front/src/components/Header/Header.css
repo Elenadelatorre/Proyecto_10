@@ -10,7 +10,7 @@ header {
   justify-content: space-around;
   flex-wrap: wrap;
   align-items: center;
-  height: 10vh;
+  height: 12vh;
   z-index: 10;
 }
 
@@ -28,6 +28,8 @@ header {
 }
 
 header #logoutlink {
+  position: sticky; /* Cambia a sticky */
+  top: 0;
   background-color: var(--ev-color-6);
   border: none;
 }
@@ -74,4 +76,29 @@ header #loginlink {
 header #loginlink:hover {
   background-color: var(--ev-color-3);
   color: var(--ev-color-5);
+}
+
+
+/* Estilo del contenedor del menú */
+#menu-container {
+  position: absolute; /* Asegúrate de que el menú esté en posición absoluta */
+  right: 0; /* Coloca el menú a la derecha */
+  top: 100%; /* Coloca el menú justo debajo del header */
+  background-color: var(--ev-color-5); /* Fondo del menú */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5); /* Sombra para profundidad */
+  display: flex;
+  flex-direction: column; /* Alinear enlaces en columna */
+  z-index: 20; /* Asegúrate de que el menú esté por encima de otros elementos */
+}
+
+/* Ocultar el menú inicialmente */
+.hidden {
+  display: none;
+}
+
+/* Mostrar menú en dispositivos móviles */
+@media (max-width: 768px) {
+  #menu-container {
+    width: 200px; /* Ancho del menú */
+  }
 }
